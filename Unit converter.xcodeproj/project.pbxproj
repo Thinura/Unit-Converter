@@ -9,13 +9,24 @@
 /* Begin PBXBuildFile section */
 		369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85C925D3EE78005C3B11 /* AppDelegate.swift */; };
 		369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */; };
-		369C85CE25D3EE78005C3B11 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85CD25D3EE78005C3B11 /* ViewController.swift */; };
 		369C85D125D3EE78005C3B11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 369C85CF25D3EE78005C3B11 /* Main.storyboard */; };
 		369C85D425D3EE78005C3B11 /* Unit_converter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 369C85D225D3EE78005C3B11 /* Unit_converter.xcdatamodeld */; };
 		369C85D625D3EE7B005C3B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 369C85D525D3EE7B005C3B11 /* Assets.xcassets */; };
 		369C85D925D3EE7B005C3B11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 369C85D725D3EE7B005C3B11 /* LaunchScreen.storyboard */; };
 		369C85E425D3EE7C005C3B11 /* Unit_converterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85E325D3EE7C005C3B11 /* Unit_converterTests.swift */; };
 		369C85EF25D3EE7C005C3B11 /* Unit_converterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85EE25D3EE7C005C3B11 /* Unit_converterUITests.swift */; };
+		36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99E525D7E087009A4777 /* TabBarViewController.swift */; };
+		36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */; };
+		36BE99F025D7E0D4009A4777 /* ConvertionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99EF25D7E0D4009A4777 /* ConvertionsViewController.swift */; };
+		36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */; };
+		36BE99FA25D7E0FB009A4777 /* WeightViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99F925D7E0FB009A4777 /* WeightViewController.swift */; };
+		36BE99FF25D7E107009A4777 /* TempratureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99FE25D7E107009A4777 /* TempratureViewController.swift */; };
+		36BE9A0425D7E123009A4777 /* LengthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A0325D7E123009A4777 /* LengthViewController.swift */; };
+		36BE9A0925D7E12A009A4777 /* SpeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */; };
+		36BE9A0E25D7E319009A4777 /* VolumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */; };
+		36BE9A1325D7E339009A4777 /* LiquidVolumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */; };
+		36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A2125D86A04009A4777 /* CustomKeyboard.swift */; };
+		36BE9A2425D86A04009A4777 /* CustomKeyboard.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +50,6 @@
 		369C85C625D3EE78005C3B11 /* Unit converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unit converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		369C85C925D3EE78005C3B11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		369C85CD25D3EE78005C3B11 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		369C85D025D3EE78005C3B11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		369C85D325D3EE78005C3B11 /* Unit_converter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Unit_converter.xcdatamodel; sourceTree = "<group>"; };
 		369C85D525D3EE7B005C3B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -51,6 +61,18 @@
 		369C85EA25D3EE7C005C3B11 /* Unit converterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit converterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		369C85EE25D3EE7C005C3B11 /* Unit_converterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unit_converterUITests.swift; sourceTree = "<group>"; };
 		369C85F025D3EE7C005C3B11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		36BE99E525D7E087009A4777 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
+		36BE99EF25D7E0D4009A4777 /* ConvertionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertionsViewController.swift; sourceTree = "<group>"; };
+		36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		36BE99F925D7E0FB009A4777 /* WeightViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightViewController.swift; sourceTree = "<group>"; };
+		36BE99FE25D7E107009A4777 /* TempratureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempratureViewController.swift; sourceTree = "<group>"; };
+		36BE9A0325D7E123009A4777 /* LengthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthViewController.swift; sourceTree = "<group>"; };
+		36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedViewController.swift; sourceTree = "<group>"; };
+		36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeViewController.swift; sourceTree = "<group>"; };
+		36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidVolumeViewController.swift; sourceTree = "<group>"; };
+		36BE9A2125D86A04009A4777 /* CustomKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboard.swift; sourceTree = "<group>"; };
+		36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomKeyboard.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,10 +123,11 @@
 		369C85C825D3EE78005C3B11 /* Unit converter */ = {
 			isa = PBXGroup;
 			children = (
+				369C860125D3F03D005C3B11 /* Controller */,
+				369C860025D3F034005C3B11 /* View */,
+				369C85FF25D3F024005C3B11 /* Model */,
 				369C85C925D3EE78005C3B11 /* AppDelegate.swift */,
 				369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */,
-				369C85CD25D3EE78005C3B11 /* ViewController.swift */,
-				369C85CF25D3EE78005C3B11 /* Main.storyboard */,
 				369C85D525D3EE7B005C3B11 /* Assets.xcassets */,
 				369C85D725D3EE7B005C3B11 /* LaunchScreen.storyboard */,
 				369C85DA25D3EE7B005C3B11 /* Info.plist */,
@@ -129,6 +152,48 @@
 				369C85F025D3EE7C005C3B11 /* Info.plist */,
 			);
 			path = "Unit converterUITests";
+			sourceTree = "<group>";
+		};
+		369C85FF25D3F024005C3B11 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		369C860025D3F034005C3B11 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				36BE9A1B25D86897009A4777 /* CustomKeyboard */,
+				369C85CF25D3EE78005C3B11 /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		369C860125D3F03D005C3B11 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				36BE99E525D7E087009A4777 /* TabBarViewController.swift */,
+				36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */,
+				36BE99EF25D7E0D4009A4777 /* ConvertionsViewController.swift */,
+				36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */,
+				36BE99F925D7E0FB009A4777 /* WeightViewController.swift */,
+				36BE99FE25D7E107009A4777 /* TempratureViewController.swift */,
+				36BE9A0325D7E123009A4777 /* LengthViewController.swift */,
+				36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */,
+				36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */,
+				36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		36BE9A1B25D86897009A4777 /* CustomKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				36BE9A2125D86A04009A4777 /* CustomKeyboard.swift */,
+				36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */,
+			);
+			path = CustomKeyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -237,6 +302,7 @@
 				369C85D925D3EE7B005C3B11 /* LaunchScreen.storyboard in Resources */,
 				369C85D625D3EE7B005C3B11 /* Assets.xcassets in Resources */,
 				369C85D125D3EE78005C3B11 /* Main.storyboard in Resources */,
+				36BE9A2425D86A04009A4777 /* CustomKeyboard.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,9 +327,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				369C85CE25D3EE78005C3B11 /* ViewController.swift in Sources */,
+				36BE9A0425D7E123009A4777 /* LengthViewController.swift in Sources */,
+				36BE9A1325D7E339009A4777 /* LiquidVolumeViewController.swift in Sources */,
+				36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */,
+				36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */,
+				36BE99FF25D7E107009A4777 /* TempratureViewController.swift in Sources */,
+				36BE99F025D7E0D4009A4777 /* ConvertionsViewController.swift in Sources */,
+				36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */,
 				369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */,
+				36BE99FA25D7E0FB009A4777 /* WeightViewController.swift in Sources */,
 				369C85D425D3EE78005C3B11 /* Unit_converter.xcdatamodeld in Sources */,
+				36BE9A0E25D7E319009A4777 /* VolumeViewController.swift in Sources */,
+				36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */,
+				36BE9A0925D7E12A009A4777 /* SpeedViewController.swift in Sources */,
 				369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
