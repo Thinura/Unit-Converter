@@ -1,5 +1,5 @@
 //
-//  ConvertionsViewController.swift
+//  TemperatureViewController.swift
 //  Unit converter
 //
 //  Created by Thinura Laksara on 2021-02-13.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ConvertionsViewController: UIViewController {
+class TemperatureViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

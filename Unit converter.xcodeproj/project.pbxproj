@@ -15,18 +15,20 @@
 		369C85D925D3EE7B005C3B11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 369C85D725D3EE7B005C3B11 /* LaunchScreen.storyboard */; };
 		369C85E425D3EE7C005C3B11 /* Unit_converterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85E325D3EE7C005C3B11 /* Unit_converterTests.swift */; };
 		369C85EF25D3EE7C005C3B11 /* Unit_converterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85EE25D3EE7C005C3B11 /* Unit_converterUITests.swift */; };
+		36B33C2325D9AD0800D78591 /* ConverstionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B33C2225D9AD0800D78591 /* ConverstionsViewController.swift */; };
 		36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99E525D7E087009A4777 /* TabBarViewController.swift */; };
 		36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */; };
-		36BE99F025D7E0D4009A4777 /* ConvertionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99EF25D7E0D4009A4777 /* ConvertionsViewController.swift */; };
 		36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */; };
 		36BE99FA25D7E0FB009A4777 /* WeightViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99F925D7E0FB009A4777 /* WeightViewController.swift */; };
-		36BE99FF25D7E107009A4777 /* TempratureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99FE25D7E107009A4777 /* TempratureViewController.swift */; };
+		36BE99FF25D7E107009A4777 /* TemperatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99FE25D7E107009A4777 /* TemperatureViewController.swift */; };
 		36BE9A0425D7E123009A4777 /* LengthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A0325D7E123009A4777 /* LengthViewController.swift */; };
 		36BE9A0925D7E12A009A4777 /* SpeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */; };
 		36BE9A0E25D7E319009A4777 /* VolumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */; };
 		36BE9A1325D7E339009A4777 /* LiquidVolumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */; };
 		36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE9A2125D86A04009A4777 /* CustomKeyboard.swift */; };
 		36BE9A2425D86A04009A4777 /* CustomKeyboard.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */; };
+		36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CFF77F25DDA50F00BE0233 /* Conversion.swift */; };
+		36CFF78825DDBB3900BE0233 /* ConversionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,18 +63,20 @@
 		369C85EA25D3EE7C005C3B11 /* Unit converterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit converterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		369C85EE25D3EE7C005C3B11 /* Unit_converterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unit_converterUITests.swift; sourceTree = "<group>"; };
 		369C85F025D3EE7C005C3B11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		36B33C2225D9AD0800D78591 /* ConverstionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverstionsViewController.swift; sourceTree = "<group>"; };
 		36BE99E525D7E087009A4777 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
-		36BE99EF25D7E0D4009A4777 /* ConvertionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertionsViewController.swift; sourceTree = "<group>"; };
 		36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		36BE99F925D7E0FB009A4777 /* WeightViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightViewController.swift; sourceTree = "<group>"; };
-		36BE99FE25D7E107009A4777 /* TempratureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempratureViewController.swift; sourceTree = "<group>"; };
+		36BE99FE25D7E107009A4777 /* TemperatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureViewController.swift; sourceTree = "<group>"; };
 		36BE9A0325D7E123009A4777 /* LengthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthViewController.swift; sourceTree = "<group>"; };
 		36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedViewController.swift; sourceTree = "<group>"; };
 		36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeViewController.swift; sourceTree = "<group>"; };
 		36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidVolumeViewController.swift; sourceTree = "<group>"; };
 		36BE9A2125D86A04009A4777 /* CustomKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboard.swift; sourceTree = "<group>"; };
 		36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomKeyboard.xib; sourceTree = "<group>"; };
+		36CFF77F25DDA50F00BE0233 /* Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversion.swift; sourceTree = "<group>"; };
+		36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +161,8 @@
 		369C85FF25D3F024005C3B11 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				36CFF77F25DDA50F00BE0233 /* Conversion.swift */,
+				36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -175,14 +181,14 @@
 			children = (
 				36BE99E525D7E087009A4777 /* TabBarViewController.swift */,
 				36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */,
-				36BE99EF25D7E0D4009A4777 /* ConvertionsViewController.swift */,
 				36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */,
 				36BE99F925D7E0FB009A4777 /* WeightViewController.swift */,
-				36BE99FE25D7E107009A4777 /* TempratureViewController.swift */,
+				36BE99FE25D7E107009A4777 /* TemperatureViewController.swift */,
 				36BE9A0325D7E123009A4777 /* LengthViewController.swift */,
 				36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */,
 				36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */,
 				36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */,
+				36B33C2225D9AD0800D78591 /* ConverstionsViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -331,13 +337,15 @@
 				36BE9A1325D7E339009A4777 /* LiquidVolumeViewController.swift in Sources */,
 				36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */,
 				36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */,
-				36BE99FF25D7E107009A4777 /* TempratureViewController.swift in Sources */,
-				36BE99F025D7E0D4009A4777 /* ConvertionsViewController.swift in Sources */,
+				36CFF78825DDBB3900BE0233 /* ConversionViewCell.swift in Sources */,
+				36BE99FF25D7E107009A4777 /* TemperatureViewController.swift in Sources */,
 				36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */,
+				36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */,
 				369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */,
 				36BE99FA25D7E0FB009A4777 /* WeightViewController.swift in Sources */,
 				369C85D425D3EE78005C3B11 /* Unit_converter.xcdatamodeld in Sources */,
 				36BE9A0E25D7E319009A4777 /* VolumeViewController.swift in Sources */,
+				36B33C2325D9AD0800D78591 /* ConverstionsViewController.swift in Sources */,
 				36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */,
 				36BE9A0925D7E12A009A4777 /* SpeedViewController.swift in Sources */,
 				369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */,

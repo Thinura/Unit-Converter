@@ -35,6 +35,7 @@
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemGrayColor"/>
                                     <constraints>
+                                        <constraint firstItem="CVt-t5-Nxn" firstAttribute="top" secondItem="Mta-nh-LsH" secondAttribute="top" constant="26" id="6qM-hJ-LKT"/>
                                         <constraint firstAttribute="trailing" secondItem="CVt-t5-Nxn" secondAttribute="trailing" constant="126" id="U3F-5Q-X9u"/>
                                         <constraint firstItem="CVt-t5-Nxn" firstAttribute="centerY" secondItem="Mta-nh-LsH" secondAttribute="centerY" id="VDb-vR-tJz"/>
                                         <constraint firstItem="CVt-t5-Nxn" firstAttribute="centerY" secondItem="HIO-ve-6pa" secondAttribute="centerY" id="Z4h-dF-YBr"/>
