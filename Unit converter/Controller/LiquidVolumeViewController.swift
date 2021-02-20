@@ -7,6 +7,10 @@
 
 import UIKit
 
+/// Liquid volume conversions are saved by type "liquidVolume" in User defaults
+let LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY = "liquidVolume"
+private let LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+
 class LiquidVolumeViewController: UIViewController {
 
     override func viewDidLoad() {

@@ -7,6 +7,10 @@
 
 import UIKit
 
+/// Volume conversions are saved by type "volume" in User defaults
+let VOLUME_CONVERSIONS_USER_DEFAULTS_KEY = "volume"
+private let VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+
 class VolumeViewController: UIViewController {
 
     override func viewDidLoad() {

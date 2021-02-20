@@ -7,6 +7,10 @@
 
 import UIKit
 
+/// Length conversions are saved by type "length" in User defaults
+let LENGTH_CONVERSIONS_USER_DEFAULTS_KEY = "length"
+private let LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+
 class LengthViewController: UIViewController {
 
     override func viewDidLoad() {

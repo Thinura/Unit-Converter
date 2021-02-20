@@ -29,6 +29,10 @@
 		36BE9A2425D86A04009A4777 /* CustomKeyboard.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */; };
 		36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CFF77F25DDA50F00BE0233 /* Conversion.swift */; };
 		36CFF78825DDBB3900BE0233 /* ConversionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */; };
+		36E6873C25E15F2B0087E2C8 /* Weight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6873B25E15F2B0087E2C8 /* Weight.swift */; };
+		36E6874325E19CD90087E2C8 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6874225E19CD90087E2C8 /* History.swift */; };
+		36E6874B25E1A4BF0087E2C8 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6874A25E1A4BF0087E2C8 /* HistoryTableViewCell.swift */; };
+		36E6875F25E1BD790087E2C8 /* UITableViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6875E25E1BD790087E2C8 /* UITableViewHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +81,10 @@
 		36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomKeyboard.xib; sourceTree = "<group>"; };
 		36CFF77F25DDA50F00BE0233 /* Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversion.swift; sourceTree = "<group>"; };
 		36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionViewCell.swift; sourceTree = "<group>"; };
+		36E6873B25E15F2B0087E2C8 /* Weight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weight.swift; sourceTree = "<group>"; };
+		36E6874225E19CD90087E2C8 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
+		36E6874A25E1A4BF0087E2C8 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
+		36E6875E25E1BD790087E2C8 /* UITableViewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +135,8 @@
 		369C85C825D3EE78005C3B11 /* Unit converter */ = {
 			isa = PBXGroup;
 			children = (
+				36E6875225E1BD0D0087E2C8 /* Helper */,
+				36E6873A25E15F0D0087E2C8 /* Utils */,
 				369C860125D3F03D005C3B11 /* Controller */,
 				369C860025D3F034005C3B11 /* View */,
 				369C85FF25D3F024005C3B11 /* Model */,
@@ -161,8 +171,8 @@
 		369C85FF25D3F024005C3B11 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				36CFF77F25DDA50F00BE0233 /* Conversion.swift */,
-				36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */,
+				36E6874125E19CB70087E2C8 /* History */,
+				36E6874025E19CAC0087E2C8 /* Conversion */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -200,6 +210,40 @@
 				36BE9A2225D86A04009A4777 /* CustomKeyboard.xib */,
 			);
 			path = CustomKeyboard;
+			sourceTree = "<group>";
+		};
+		36E6873A25E15F0D0087E2C8 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				36E6873B25E15F2B0087E2C8 /* Weight.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		36E6874025E19CAC0087E2C8 /* Conversion */ = {
+			isa = PBXGroup;
+			children = (
+				36CFF77F25DDA50F00BE0233 /* Conversion.swift */,
+				36CFF78725DDBB3900BE0233 /* ConversionViewCell.swift */,
+			);
+			path = Conversion;
+			sourceTree = "<group>";
+		};
+		36E6874125E19CB70087E2C8 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				36E6874225E19CD90087E2C8 /* History.swift */,
+				36E6874A25E1A4BF0087E2C8 /* HistoryTableViewCell.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		36E6875225E1BD0D0087E2C8 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				36E6875E25E1BD790087E2C8 /* UITableViewHelper.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -333,14 +377,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36E6874325E19CD90087E2C8 /* History.swift in Sources */,
 				36BE9A0425D7E123009A4777 /* LengthViewController.swift in Sources */,
 				36BE9A1325D7E339009A4777 /* LiquidVolumeViewController.swift in Sources */,
+				36E6873C25E15F2B0087E2C8 /* Weight.swift in Sources */,
 				36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */,
 				36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */,
 				36CFF78825DDBB3900BE0233 /* ConversionViewCell.swift in Sources */,
 				36BE99FF25D7E107009A4777 /* TemperatureViewController.swift in Sources */,
 				36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */,
 				36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */,
+				36E6874B25E1A4BF0087E2C8 /* HistoryTableViewCell.swift in Sources */,
 				369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */,
 				36BE99FA25D7E0FB009A4777 /* WeightViewController.swift in Sources */,
 				369C85D425D3EE78005C3B11 /* Unit_converter.xcdatamodeld in Sources */,
@@ -349,6 +396,7 @@
 				36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */,
 				36BE9A0925D7E12A009A4777 /* SpeedViewController.swift in Sources */,
 				369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */,
+				36E6875F25E1BD790087E2C8 /* UITableViewHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

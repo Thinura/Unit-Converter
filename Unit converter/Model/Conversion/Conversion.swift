@@ -8,11 +8,13 @@
 import Foundation
 import UIKit
 
-//
-//  Conversion class name, icon, segueIdentifier, cellBackgroundColor.
-//  This is used to render the cell in the conversion main screen.
-//
-//
+/**
+  This is used to render the cell in the conversion main screen.
+    - Parameters:
+            name - conversion name
+            icon - image of the conversion
+            segueIdentifier - segue identifier in storyboard
+*/
 
 class Conversion {
     let name: String

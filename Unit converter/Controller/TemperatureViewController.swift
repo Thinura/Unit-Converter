@@ -7,6 +7,10 @@
 
 import UIKit
 
+/// Temperature conversions are saved by type "temperature" in User defaults
+let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY = "temperature"
+private let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+
 class TemperatureViewController: UIViewController {
 
     override func viewDidLoad() {

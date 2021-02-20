@@ -7,6 +7,10 @@
 
 import UIKit
 
+/// Speed conversions are saved by type "speed" in User defaults
+let SPEED_CONVERSIONS_USER_DEFAULTS_KEY = "speed"
+private let SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+
 class SpeedViewController: UIViewController {
 
     override func viewDidLoad() {
