@@ -6,24 +6,48 @@
 //
 
 import UIKit
+import DropDown
+let DECIMAL_DIGIT_USER_DEFAULTS_KEY = "decimal"
 
 class SettingsViewController: UIViewController {
-
+    
+    @IBOutlet weak var buttonSelectorDecimal: UIButton!
+    
+    let decimalSelector = DropDown()
+    var decimal =  4
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        /// Reading from user defaults
+        let decimalDigit = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
+        if (decimalDigit != nil){
+            self.decimal = Int(decimalDigit!) ?? 0
+        }
+        
+        buttonSelectorDecimal.setTitle(String(self.decimal), for: .normal)
     }
-    */
-
+    
+    @IBAction func onClickSelectorDecimal(_ sender: UIButton) {
+        decimalSelector.dataSource = ["2","3","4"]//3
+        decimalSelector.anchorView = sender
+        decimalSelector.bottomOffset = CGPoint(x: 0, y: sender.frame.size.height)
+        decimalSelector.show()
+        decimalSelector.selectionAction = { [weak self] (index: Int, item: String) in //8
+            guard let _ = self else { return }
+            
+            self!.decimal =  Int(item) ?? 0
+            print(self!.decimal)
+            /// Saving data in user defaults
+            UserDefaults.standard.set(item, forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY)
+            sender.setTitle(item, for: .normal) //9
+        }
+        
+    }
+    
 }

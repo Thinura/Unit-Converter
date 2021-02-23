@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// WeightUnit enumeration is used to
+/// WeightMeasurementUnit enumeration is used to define the units
 enum WeightMeasurementUnit {
     case kilogram, gram, ounce, pound, stone
     

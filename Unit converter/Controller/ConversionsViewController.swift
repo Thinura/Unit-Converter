@@ -11,6 +11,7 @@ class ConversionsViewController: UIViewController {
     
     @IBOutlet var conversionsCollectionView: UICollectionView!
     
+    /// Defaults
     var conversionsCell = [Conversion]()
     var cellItemSpacing = 10.0
     var cellLineSpacing =  15.0
@@ -52,7 +53,7 @@ class ConversionsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Setup the Delegates
+        // Setup the Delegates and data source
         self.conversionsCollectionView.delegate = self
         self.conversionsCollectionView.dataSource = self
         
