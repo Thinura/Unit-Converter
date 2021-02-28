@@ -11,7 +11,7 @@ import UIKit
 let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY = "temperature"
 private let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
 
-class TemperatureViewController: UIViewController {
+class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     
     /// Defaults
     var activeInputTextField = UITextField()
@@ -38,6 +38,8 @@ class TemperatureViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
+        
         ///After loading checking whether the input fields are empty or not
         checkAvailabilityRightBarButton()
     }
@@ -45,12 +47,117 @@ class TemperatureViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        
+        settingUpCustomKeyboard()
+        
+        settingUpDecimal()
+        // Changing the values if decimal changed
+        if !isInputTextFieldEmpty(){
+            // Change according to the decimal digit but not active input field
+            handleInputTextField(activeInputTextField)
+        }
+        
+    }
+    
+    /// This function setting up the custom keyboard
+    func settingUpCustomKeyboard() {
+        
+        // Setting up the custom keyboard with the text input fields
+        celsiusInputTextField.initializeCustomKeyboard(delegate: self)
+        fahrenheitInputTextField.initializeCustomKeyboard(delegate: self)
+        kelvinInputTextField.initializeCustomKeyboard(delegate: self)
+        
+        //Listening to keyboard show events
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        // Notifying to Enable minus button
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "enableMinus"), object: nil)
+        
+    }
+    
+    /// This function read the decimal digit from user defaults
+    func settingUpDecimal() {
         /// Reading from user defaults
         let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
         
         if (decimal != nil){
             self.decimalDigit = Int(decimal!) ?? 0
         }
+    }
+    
+    
+    /**
+     This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
+     
+     */
+    @objc func keyWillHide(){
+        // Remove listening the first responder
+        view.endEditing(true)
+        
+        UIView.animate(withDuration: 0.50, animations: {
+            // Putting the view back to previous state
+            self.temperatureMainStackTopConstraint.constant = self.temperatureMainStackTopConstraintDefaultHeight
+            self.view.layoutIfNeeded()
+        })
+    }
+    
+    
+    /**
+     This function will recognise the responder and adjust respectively ui text field.
+     The scroll will adjust accordingly.
+     - Parameter NSNotification: notification object
+     
+     */
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        let responder = self.findResponder(inView: self.view)
+        
+        if responder != nil{
+            activeInputTextField = responder as! UITextField
+            
+            let activeInputTextFieldSuperView = activeInputTextField.superview!
+            
+            
+            if let info = notification.userInfo{
+                let keyboard:CGRect = info["UIKeyboardFrameEndUserInfoKey"] as! CGRect
+                
+                let targetY = view.frame.size.height - keyboard.height - 15 - activeInputTextField.frame.size.height
+                
+                let initialY = temperatureScreenMainStackView.frame.origin.y + activeInputTextFieldSuperView.frame.origin.y + activeInputTextField.frame.origin.y
+                
+                
+                if initialY > targetY {
+                    let diff = targetY - initialY
+                    let targetOffsetForTopConstraint = temperatureMainStackTopConstraint.constant + diff
+                    self.view.layoutIfNeeded()
+                    
+                    UIView.animate(withDuration: 0.25, animations: {
+                        self.temperatureMainStackTopConstraint.constant = targetOffsetForTopConstraint
+                        self.view.layoutIfNeeded()
+                    })
+                }
+                
+                var contentInset:UIEdgeInsets = self.temperatureScreenScrollView.contentInset
+                contentInset.bottom = keyboard.size.height
+                temperatureScreenScrollView.contentInset = contentInset
+            }
+        }
+    }
+
+    /**
+     This function finds the first responder in a UIView
+     - Parameter inView: The corresponding UIView.
+     - Returns: A UIView or a subview will be returned.
+     */
+    func findResponder(inView view: UIView) -> UIView? {
+        for subView in view.subviews{
+            if subView.isFirstResponder{
+                return subView
+            }
+            if let recursiveSubView = self.findResponder(inView: subView){
+                return recursiveSubView
+            }
+        }
+        return nil
     }
     
     /// listening which input was typed
@@ -71,6 +178,8 @@ class TemperatureViewController: UIViewController {
         
         checkAvailabilityRightBarButton()
     }
+    
+    
     
     /// Checking whether the input is field is empty if so save button needs to be disabled
     func checkAvailabilityRightBarButton() {
@@ -165,25 +274,14 @@ class TemperatureViewController: UIViewController {
             /// Saving data in user defaults
             UserDefaults.standard.set(temperatureHistory, forKey: TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY)
             
-            /// Initialising success alert
-            let alert = UIAlertController(title: "Success", message: "The temperature conversion was successfully saved!", preferredStyle: UIAlertController.Style.alert)
             
-            /// Defining the alert action
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            
-            /// Initialising alert to the view
-            self.present(alert, animated: true, completion: nil)
+            /// showAlert method is defined in the  UIViewControllerHelper
+            showAlert(title: "Success", message: "The temperature conversion was successfully saved.")
             
         }else{
             
-            ///Initialising error alert
-            let alert = UIAlertController(title: "Error", message: "You are trying to save an empty conversion!", preferredStyle: UIAlertController.Style.alert)
-            
-            /// Defining the alert action
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            
-            /// Initialising alert to the view
-            self.present(alert, animated: true, completion: nil)
+            /// showAlert method is defined in the  UIViewControllerHelper
+            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
             
         }
         
@@ -194,5 +292,36 @@ class TemperatureViewController: UIViewController {
         celsiusInputTextField.text = ""
         fahrenheitInputTextField.text = ""
         kelvinInputTextField.text = ""
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+        - Parameter key:Int
+     */
+    func customKeyboardNumericKeysHandle(key: Int) {
+        print("Number pressed is \(key)")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+     */
+    func customKeyboardBackspaceKeyHandle() {
+        print("Backspace is triggered.")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+        - Parameter symbol:String
+     */
+    func customKeyboardSymbolKeyHandle(symbol: String) {
+        print("Symbol button triggered is \(symbol)")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use and hide the keyboard
+     */
+    func customKeyboardMinimusKeyHandle() {
+        print("Minimus button pressed.")
+        keyWillHide()
     }
 }

@@ -134,9 +134,10 @@ class HistoryViewController: UIViewController {
             
             UserDefaults.standard.set([], forKey: conversionType)
             
-            let alert = UIAlertController(title: "Success", message: "The saved conversions were successfully deleted!", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            showAlert(title: "Success", message: "The saved conversions were successfully deleted.")
+//            let alert = UIAlertController(title: "Success", message: "The saved conversions were successfully deleted!", preferredStyle: UIAlertController.Style.alert)
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+//            self.present(alert, animated: true, completion: nil)
             
             /// refresh history screen
             generateHistoryCells(type: conversionType, icon: icon)
@@ -170,7 +171,7 @@ extension HistoryViewController:UITableViewDataSource,UITableViewDelegate{
         cell.historyConversionText.text = allHistory[indexPath.row].getHistoryConversionDetails()
         cell.historyConversionIcon.image = allHistory[indexPath.row].getHistoryIcon()
         
-        // Historycell styles
+        // History cell styles
         cell.isUserInteractionEnabled = false
         /*cell.contentView.backgroundColor = UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.00)
          cell.contentView.layer.cornerRadius = 10.0

@@ -11,6 +11,7 @@ extension Double
 {
     func truncate(places : Int)-> Double
     {
-        return Double(floor(pow(10.0, Double(places)) * self)/pow(10.0, Double(places)))
+        let divisor = pow(10.0, Double(places))
+        return Double((self * divisor).rounded()/divisor)
     }
 }

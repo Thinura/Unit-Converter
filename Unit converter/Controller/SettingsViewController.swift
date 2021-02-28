@@ -7,6 +7,7 @@
 
 import UIKit
 import DropDown
+
 let DECIMAL_DIGIT_USER_DEFAULTS_KEY = "decimal"
 
 class SettingsViewController: UIViewController {
@@ -15,10 +16,10 @@ class SettingsViewController: UIViewController {
     
     let decimalSelector = DropDown()
     var decimal =  4
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -11,7 +11,7 @@ import UIKit
 let LENGTH_CONVERSIONS_USER_DEFAULTS_KEY = "length"
 private let LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
 
-class LengthViewController: UIViewController {
+class LengthViewController: UIViewController, CustomKeyboardDelegate {
     
     /// Defaults
     var activeInputTextField = UITextField()
@@ -23,7 +23,7 @@ class LengthViewController: UIViewController {
     /// Used for keyboard handling - When user pressed auto scroll will be enable
     @IBOutlet weak var lengthMainStackTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var lengthScreenScrollView: UIScrollView!
-    @IBOutlet weak var speedScreenMainStackView: UIStackView!
+    @IBOutlet weak var lengthScreenMainStackView: UIStackView!
     
     /// Text input fields
     @IBOutlet weak var millimetreInputTextField: UITextField!
@@ -47,6 +47,8 @@ class LengthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
+        
         ///After loading checking whether the input fields are empty or not
         checkAvailabilityRightBarButton()
     }
@@ -54,6 +56,35 @@ class LengthViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        settingUpCustomKeyboard()
+        
+        settingUpDecimal()
+        // Changing the values if decimal changed
+        if !isInputTextFieldEmpty(){
+            // Change according to the decimal digit but not active input field
+            handleInputTextField(activeInputTextField)
+        }
+    }
+    
+    /// This function setting up the custom keyboard
+    func settingUpCustomKeyboard() {
+        
+        // Setting up the custom keyboard with the text input fields
+        millimetreInputTextField.initializeCustomKeyboard(delegate: self)
+        centimetreInputTextField.initializeCustomKeyboard(delegate: self)
+        inchInputTextField.initializeCustomKeyboard(delegate: self)
+        metreInputTextField.initializeCustomKeyboard(delegate: self)
+        kilometreInputTextField.initializeCustomKeyboard(delegate: self)
+        mileInputTextField.initializeCustomKeyboard(delegate: self)
+        yardInputTextField.initializeCustomKeyboard(delegate: self)
+        
+        //Listening to keyboard show events
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+    }
+    
+    /// This function read the decimal digit from user defaults
+    func settingUpDecimal() {
         /// Reading from user defaults
         let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
         
@@ -62,6 +93,80 @@ class LengthViewController: UIViewController {
         }
     }
     
+    /**
+     This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
+     
+     */
+    @objc func keyWillHide(){
+        // Remove listening the first responder
+        view.endEditing(true)
+        
+        UIView.animate(withDuration: 0.50, animations: {
+            // Putting the view back to previous state
+            self.lengthMainStackTopConstraint.constant = self.lengthMainStackTopConstraintDefaultHeight
+            self.view.layoutIfNeeded()
+        })
+    }
+    
+    
+    /**
+     This function will recognise the responder and adjust respectively ui text field.
+     The scroll will adjust accordingly.
+     - Parameter NSNotification: notification object
+     
+     */
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        let responder = self.findResponder(inView: self.view)
+        
+        if responder != nil{
+            activeInputTextField = responder as! UITextField
+            
+            let activeInputTextFieldSuperView = activeInputTextField.superview!
+            
+            
+            if let info = notification.userInfo{
+                let keyboard:CGRect = info["UIKeyboardFrameEndUserInfoKey"] as! CGRect
+                
+                let targetY = view.frame.size.height - keyboard.height - 15 - activeInputTextField.frame.size.height
+                
+                let initialY = lengthScreenMainStackView.frame.origin.y + activeInputTextFieldSuperView.frame.origin.y + activeInputTextField.frame.origin.y
+                
+                
+                if initialY > targetY {
+                    let diff = targetY - initialY
+                    let targetOffsetForTopConstraint = lengthMainStackTopConstraint.constant + diff
+                    self.view.layoutIfNeeded()
+                    
+                    UIView.animate(withDuration: 0.25, animations: {
+                        self.lengthMainStackTopConstraint.constant = targetOffsetForTopConstraint
+                        self.view.layoutIfNeeded()
+                    })
+                }
+                
+                var contentInset:UIEdgeInsets = self.lengthScreenScrollView.contentInset
+                contentInset.bottom = keyboard.size.height
+                lengthScreenScrollView.contentInset = contentInset
+            }
+        }
+    }
+    
+    /**
+     This function finds the first responder in a UIView
+     - Parameter inView: The corresponding UIView.
+     - Returns: A UIView or a subview will be returned.
+     */
+    func findResponder(inView view: UIView) -> UIView? {
+        for subView in view.subviews{
+            if subView.isFirstResponder{
+                return subView
+            }
+            if let recursiveSubView = self.findResponder(inView: subView){
+                return recursiveSubView
+            }
+        }
+        return nil
+    }
     
     /// listening which input was typed
     @IBAction func handleInputTextField(_ sender: UITextField) {
@@ -188,7 +293,7 @@ class LengthViewController: UIViewController {
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
         if !isInputTextFieldEmpty(){
-            let conversion = "\(mileInputTextField.text!) mm = \(centimetreInputTextField.text!) cm = \(inchInputTextField.text!) inches = \(metreInputTextField.text!) m = \(mileInputTextField.text!) miles = \(yardInputTextField.text!) yards"
+            let conversion = "\(millimetreInputTextField.text!) mm = \(centimetreInputTextField.text!) cm = \(inchInputTextField.text!) inches = \(metreInputTextField.text!) m = \(mileInputTextField.text!) miles = \(yardInputTextField.text!) yards"
             
             /// Getting initial history data
             var lengthHistory = UserDefaults.standard.array(forKey: SPEED_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
@@ -202,27 +307,45 @@ class LengthViewController: UIViewController {
             /// Saving data in user defaults
             UserDefaults.standard.set(lengthHistory, forKey: LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
             
-            /// Initialising success alert
-            let alert = UIAlertController(title: "Success", message: "The temperature conversion was successfully saved!", preferredStyle: UIAlertController.Style.alert)
-            
-            /// Defining the alert action
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            
-            /// Initialising alert to the view
-            self.present(alert, animated: true, completion: nil)
+            /// showAlert method is defined in the  UIViewControllerHelper
+            showAlert(title: "Success", message: "The length conversion was successfully saved.")
             
         }else{
             
-            ///Initialising error alert
-            let alert = UIAlertController(title: "Error", message: "You are trying to save an empty conversion!", preferredStyle: UIAlertController.Style.alert)
-            
-            /// Defining the alert action
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            
-            /// Initialising alert to the view
-            self.present(alert, animated: true, completion: nil)
+            /// showAlert method is defined in the  UIViewControllerHelper
+            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
             
         }
     }
     
+    /**
+     This function will only trigger when custom keyboard in use
+     - Parameter key:Int
+     */
+    func customKeyboardNumericKeysHandle(key: Int) {
+        print("Number pressed is \(key)")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+     */
+    func customKeyboardBackspaceKeyHandle() {
+        print("Backspace is triggered.")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+     - Parameter symbol:String
+     */
+    func customKeyboardSymbolKeyHandle(symbol: String) {
+        print("Symbol button triggered is \(symbol)")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use and hide the keyboard
+     */
+    func customKeyboardMinimusKeyHandle() {
+        print("Minimus button pressed.")
+        keyWillHide()
+    }
 }

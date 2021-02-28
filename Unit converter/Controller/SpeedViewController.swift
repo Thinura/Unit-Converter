@@ -11,7 +11,7 @@ import UIKit
 let SPEED_CONVERSIONS_USER_DEFAULTS_KEY = "speed"
 private let SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
 
-class SpeedViewController: UIViewController {
+class SpeedViewController: UIViewController,CustomKeyboardDelegate {
     
     /// Defaults
     var activeInputTextField = UITextField()
@@ -41,6 +41,7 @@ class SpeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
         ///After loading checking whether the input fields are empty or not
         checkAvailabilityRightBarButton()
     }
@@ -48,6 +49,32 @@ class SpeedViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        settingUpCustomKeyboard()
+        
+        settingUpDecimal()
+        // Changing the values if decimal changed
+        if !isInputTextFieldEmpty(){
+            // Change according to the decimal digit but not active input field
+            handleInputTextField(activeInputTextField)
+        }
+    }
+    
+    /// This function setting up the custom keyboard
+    func settingUpCustomKeyboard() {
+        
+        // Setting up the custom keyboard with the text input fields
+        metresSecondInputTextField.initializeCustomKeyboard(delegate: self)
+        kilometreHourInputTextField.initializeCustomKeyboard(delegate: self)
+        milesHourInputTextField.initializeCustomKeyboard(delegate: self)
+        knotInputTextField.initializeCustomKeyboard(delegate: self)
+        
+        //Listening to keyboard show events
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+    }
+    
+    /// This function read the decimal digit from user defaults
+    func settingUpDecimal() {
         /// Reading from user defaults
         let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
         
@@ -56,6 +83,80 @@ class SpeedViewController: UIViewController {
         }
     }
     
+    /**
+     This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
+     
+     */
+    @objc func keyWillHide(){
+        // Remove listening the first responder
+        view.endEditing(true)
+        
+        UIView.animate(withDuration: 0.50, animations: {
+            // Putting the view back to previous state
+            self.speedMainStackTopConstraint.constant = self.speedMainStackTopConstraintDefaultHeight
+            self.view.layoutIfNeeded()
+        })
+    }
+    
+    
+    /**
+     This function will recognise the responder and adjust respectively ui text field.
+     The scroll will adjust accordingly.
+     - Parameter NSNotification: notification object
+     
+     */
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        let responder = self.findResponder(inView: self.view)
+        
+        if responder != nil{
+            activeInputTextField = responder as! UITextField
+            
+            let activeInputTextFieldSuperView = activeInputTextField.superview!
+            
+            
+            if let info = notification.userInfo{
+                let keyboard:CGRect = info["UIKeyboardFrameEndUserInfoKey"] as! CGRect
+                
+                let targetY = view.frame.size.height - keyboard.height - 15 - activeInputTextField.frame.size.height
+                
+                let initialY = speedScreenMainStackView.frame.origin.y + activeInputTextFieldSuperView.frame.origin.y + activeInputTextField.frame.origin.y
+                
+                
+                if initialY > targetY {
+                    let diff = targetY - initialY
+                    let targetOffsetForTopConstraint = speedMainStackTopConstraint.constant + diff
+                    self.view.layoutIfNeeded()
+                    
+                    UIView.animate(withDuration: 0.25, animations: {
+                        self.speedMainStackTopConstraint.constant = targetOffsetForTopConstraint
+                        self.view.layoutIfNeeded()
+                    })
+                }
+                
+                var contentInset:UIEdgeInsets = self.speedScreenScrollView.contentInset
+                contentInset.bottom = keyboard.size.height
+                speedScreenScrollView.contentInset = contentInset
+            }
+        }
+    }
+
+    /**
+     This function finds the first responder in a UIView
+     - Parameter inView: The corresponding UIView.
+     - Returns: A UIView or a subview will be returned.
+     */
+    func findResponder(inView view: UIView) -> UIView? {
+        for subView in view.subviews{
+            if subView.isFirstResponder{
+                return subView
+            }
+            if let recursiveSubView = self.findResponder(inView: subView){
+                return recursiveSubView
+            }
+        }
+        return nil
+    }
     
     /// Checking whether the input is field is empty if so save button needs to be disabled
     func checkAvailabilityRightBarButton() {
@@ -180,27 +281,46 @@ class SpeedViewController: UIViewController {
             /// Saving data in user defaults
             UserDefaults.standard.set(speedHistory, forKey: SPEED_CONVERSIONS_USER_DEFAULTS_KEY)
             
-            /// Initialising success alert
-            let alert = UIAlertController(title: "Success", message: "The temperature conversion was successfully saved!", preferredStyle: UIAlertController.Style.alert)
-            
-            /// Defining the alert action
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            
-            /// Initialising alert to the view
-            self.present(alert, animated: true, completion: nil)
+            /// showAlert method is defined in the  UIViewControllerHelper
+            showAlert(title: "Success", message: "The speed conversion was successfully saved.")
             
         }else{
             
-            ///Initialising error alert
-            let alert = UIAlertController(title: "Error", message: "You are trying to save an empty conversion!", preferredStyle: UIAlertController.Style.alert)
-            
-            /// Defining the alert action
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            
-            /// Initialising alert to the view
-            self.present(alert, animated: true, completion: nil)
+            /// showAlert method is defined in the  UIViewControllerHelper
+            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
             
         }
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+        - Parameter key:Int
+     */
+    func customKeyboardNumericKeysHandle(key: Int) {
+        print("Number pressed is \(key)")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+     */
+    func customKeyboardBackspaceKeyHandle() {
+        print("Backspace is triggered.")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use
+        - Parameter symbol:String
+     */
+    func customKeyboardSymbolKeyHandle(symbol: String) {
+        print("Symbol button triggered is \(symbol)")
+    }
+    
+    /**
+     This function will only trigger when custom keyboard in use and hide the keyboard
+     */
+    func customKeyboardMinimusKeyHandle() {
+        print("Minimus button pressed.")
+        keyWillHide()
     }
 }
 

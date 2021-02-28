@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "backspace (1).png",
+      "filename" : "Icon-App-20x20@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Icon-App-29x29@2x-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Icon-App-40x40@2x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -17,7 +17,7 @@ class TabBarViewController: UITabBarController,UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         switch viewController{
-        case is UINavigationController:
+        case is ConversionsViewController:
             print("User is in in Conversions view")
         case is HistoryViewController:
             print("User is in in history view")
