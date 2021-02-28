@@ -135,9 +135,6 @@ class HistoryViewController: UIViewController {
             UserDefaults.standard.set([], forKey: conversionType)
             
             showAlert(title: "Success", message: "The saved conversions were successfully deleted.")
-//            let alert = UIAlertController(title: "Success", message: "The saved conversions were successfully deleted!", preferredStyle: UIAlertController.Style.alert)
-//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-//            self.present(alert, animated: true, completion: nil)
             
             /// refresh history screen
             generateHistoryCells(type: conversionType, icon: icon)
@@ -157,7 +154,7 @@ extension HistoryViewController:UITableViewDataSource,UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if allHistory.count == 0 {
             
-            self.historyTableView.setEmptyMessage("No saved conversions found", UIColor.black)
+            self.historyTableView.setEmptyMessage("No saved conversions found",UIColor.label)
         } else {
             self.historyTableView.restore()
         }

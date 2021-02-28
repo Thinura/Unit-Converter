@@ -111,6 +111,7 @@ extension ConversionsViewController: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ConversionCell", for: indexPath) as! ConversionViewCell
         cell.conversionIcon.image = conversionsCell[indexPath.row].getConversionIcon()
+        
         cell.contentView.layer.masksToBounds = false
         
         return cell

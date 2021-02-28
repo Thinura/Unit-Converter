@@ -191,7 +191,6 @@
 				369C85C925D3EE78005C3B11 /* AppDelegate.swift */,
 				369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */,
 				369C85D525D3EE7B005C3B11 /* Assets.xcassets */,
-				369C85D725D3EE7B005C3B11 /* LaunchScreen.storyboard */,
 				369C85DA25D3EE7B005C3B11 /* Info.plist */,
 				369C85D225D3EE78005C3B11 /* Unit_converter.xcdatamodeld */,
 			);
@@ -230,6 +229,7 @@
 			children = (
 				36BE9A1B25D86897009A4777 /* CustomKeyboard */,
 				369C85CF25D3EE78005C3B11 /* Main.storyboard */,
+				369C85D725D3EE7B005C3B11 /* LaunchScreen.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";

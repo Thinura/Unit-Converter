@@ -7,8 +7,8 @@
 
 import UIKit
 
-// Default size of the keyboard 350
-let customKeyboardDefaultHeight = 350
+// Default size of the keyboard 250
+let customKeyboardDefaultHeight = 250
 
 // Declares the methods needs to implement if the keyboard is used by a controller
 @objc protocol CustomKeyboardDelegate {
@@ -53,7 +53,7 @@ class CustomKeyboard: UIView {
         didSet { updateButtonAppearance() }
     }
     // Variable that will set the default font colour in keyboard key
-    var buttonDefaultFontColor = UIColor.systemBlue {
+    var buttonDefaultFontColor = UIColor.white {
         // After keys are stored didSet will call and update the appearance
         didSet { updateButtonAppearance() }
     }
@@ -65,7 +65,7 @@ class CustomKeyboard: UIView {
         didSet { updateButtonAppearance() }
     }
     // Variable that will set change the font colour in keyboard key after click session
-    var buttonClickFontColor = UIColor.systemBlue {
+    var buttonClickFontColor = UIColor.white {
         // After key is stored didSet will call and update the appearance
         didSet { updateButtonAppearance() }
     }

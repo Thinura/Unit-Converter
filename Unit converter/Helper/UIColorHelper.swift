@@ -15,7 +15,7 @@ extension UIColor{
             // Return one of two colours depending on light or dark mode
             return traits.userInterfaceStyle == .dark ?
                 // Dark mode colour
-                UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.00) :
+                UIColor(red: 48/255, green: 48/255, blue: 48/255, alpha: 1.00) :
                 // Light mode colour
                 UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.00)
         }
@@ -27,7 +27,7 @@ extension UIColor{
             // Return one of two colours depending on light or dark mode
             return traits.userInterfaceStyle == .dark ?
                 // Dark mode colour
-                UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 1.00) :
+                UIColor(red: 48/255, green: 48/255, blue: 48/255, alpha: 1.00)  :
                 // Light mode colour
                 UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 1.00)
         }
