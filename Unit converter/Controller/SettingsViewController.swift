@@ -35,7 +35,7 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func onClickSelectorDecimal(_ sender: UIButton) {
-        decimalSelector.dataSource = ["2","3","4"]//3
+        decimalSelector.dataSource = DecimalSelector.numberOfDecimals//3
         decimalSelector.anchorView = sender
         decimalSelector.bottomOffset = CGPoint(x: 0, y: sender.frame.size.height)
         decimalSelector.show()

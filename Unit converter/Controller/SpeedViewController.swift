@@ -71,7 +71,7 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
         /// Reading from user defaults
         let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
         // Default value will be set to 4 decimal points
-        let decimal = ((userDefaultDecimalDigit ?? "4") as NSString).integerValue
+        let decimal = ((userDefaultDecimalDigit ?? DecimalSelector.defaultDecimal as NSString) as NSString).integerValue
         
         if !activeInputTextField.text!.isEmpty {
             // Inililzing user default decimal digit

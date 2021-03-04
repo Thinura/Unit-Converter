@@ -12,6 +12,7 @@
 		3639B36F25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */; };
 		3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B37825EFDF3600ED6168 /* UIImageHelper.swift */; };
 		3639B3A325F064F800ED6168 /* AlertMessageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */; };
+		3639B3AC25F06C5400ED6168 /* DecimalDigitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B3AB25F06C5400ED6168 /* DecimalDigitHelper.swift */; };
 		366B756325EAE02B00D26B92 /* UIColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366B756225EAE02B00D26B92 /* UIColorHelper.swift */; };
 		369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85C925D3EE78005C3B11 /* AppDelegate.swift */; };
 		369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */; };
@@ -72,6 +73,7 @@
 		3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeyHelper.swift; sourceTree = "<group>"; };
 		3639B37825EFDF3600ED6168 /* UIImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageHelper.swift; sourceTree = "<group>"; };
 		3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertMessageHelper.swift; sourceTree = "<group>"; };
+		3639B3AB25F06C5400ED6168 /* DecimalDigitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalDigitHelper.swift; sourceTree = "<group>"; };
 		366B756225EAE02B00D26B92 /* UIColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorHelper.swift; sourceTree = "<group>"; };
 		369C85C625D3EE78005C3B11 /* Unit converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unit converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		369C85C925D3EE78005C3B11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -308,6 +310,7 @@
 				3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */,
 				3639B37825EFDF3600ED6168 /* UIImageHelper.swift */,
 				3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */,
+				3639B3AB25F06C5400ED6168 /* DecimalDigitHelper.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -588,6 +591,7 @@
 				36BE9A0E25D7E319009A4777 /* VolumeViewController.swift in Sources */,
 				366B756325EAE02B00D26B92 /* UIColorHelper.swift in Sources */,
 				36B33C2325D9AD0800D78591 /* ConversionsViewController.swift in Sources */,
+				3639B3AC25F06C5400ED6168 /* DecimalDigitHelper.swift in Sources */,
 				36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */,
 				36BE9A0925D7E12A009A4777 /* SpeedViewController.swift in Sources */,
 				36DAFAE125E4376100A40722 /* Volume.swift in Sources */,
