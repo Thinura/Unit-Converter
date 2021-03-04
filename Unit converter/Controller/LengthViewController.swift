@@ -338,16 +338,16 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
                 UserDefaults.standard.set(lengthHistory, forKey: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Success", message: "The length conversion was successfully saved.")
+                showAlert(title: Alert.Success.title, message: Alert.Success.Length.message)
                 
             }else{
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Warning", message: "The length conversion is already saved")
+                showAlert(title: Alert.Warning.title, message: Alert.Warning.Length.message)
             }
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
+            showAlert(title: Alert.Error.title, message: Alert.Error.message)
             
         }
     }

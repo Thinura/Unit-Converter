@@ -315,16 +315,16 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
                 
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Success", message: "The temperature conversion was successfully saved.")
+                showAlert(title: Alert.Success.title, message: Alert.Success.Temperature.message)
                 
             }else{
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Warning", message: "The temperature conversion is already saved")
+                showAlert(title: Alert.Warning.title, message:Alert.Warning.Temperature.message)
             }
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
+            showAlert(title: Alert.Error.title, message:Alert.Error.message)
             
         }
         

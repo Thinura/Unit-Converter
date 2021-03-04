@@ -11,6 +11,7 @@
 		3611602325E2F9DC0063702E /* Temperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3611602225E2F9DC0063702E /* Temperature.swift */; };
 		3639B36F25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */; };
 		3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B37825EFDF3600ED6168 /* UIImageHelper.swift */; };
+		3639B3A325F064F800ED6168 /* AlertMessageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */; };
 		366B756325EAE02B00D26B92 /* UIColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366B756225EAE02B00D26B92 /* UIColorHelper.swift */; };
 		369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85C925D3EE78005C3B11 /* AppDelegate.swift */; };
 		369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */; };
@@ -70,6 +71,7 @@
 		3611602225E2F9DC0063702E /* Temperature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperature.swift; sourceTree = "<group>"; };
 		3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeyHelper.swift; sourceTree = "<group>"; };
 		3639B37825EFDF3600ED6168 /* UIImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageHelper.swift; sourceTree = "<group>"; };
+		3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertMessageHelper.swift; sourceTree = "<group>"; };
 		366B756225EAE02B00D26B92 /* UIColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorHelper.swift; sourceTree = "<group>"; };
 		369C85C625D3EE78005C3B11 /* Unit converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unit converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		369C85C925D3EE78005C3B11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 				366B756225EAE02B00D26B92 /* UIColorHelper.swift */,
 				3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */,
 				3639B37825EFDF3600ED6168 /* UIImageHelper.swift */,
+				3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -574,6 +577,7 @@
 				36BE99FF25D7E107009A4777 /* TemperatureViewController.swift in Sources */,
 				369F871F25E9A34C004067C4 /* UITextFieldHelper.swift in Sources */,
 				3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */,
+				3639B3A325F064F800ED6168 /* AlertMessageHelper.swift in Sources */,
 				36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */,
 				36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */,
 				36DAFAE625E4376F00A40722 /* LiquidVolume.swift in Sources */,

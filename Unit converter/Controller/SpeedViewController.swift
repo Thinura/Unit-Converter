@@ -317,15 +317,15 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
                 UserDefaults.standard.set(speedHistory, forKey: UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_KEY)
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Success", message: "The speed conversion was successfully saved.")
+                showAlert(title: Alert.Success.title, message:Alert.Success.Speed.message)
             }else{
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Warning", message: "The speed conversion is already saved")
+                showAlert(title: Alert.Warning.title, message: Alert.Warning.Speed.message)
             }
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
+            showAlert(title: Alert.Error.title, message:Alert.Error.message)
             
         }
     }

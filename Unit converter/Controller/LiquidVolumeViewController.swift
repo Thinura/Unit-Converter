@@ -119,7 +119,7 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
     func loadLastConversion(){
         /// Read from user defaults
         let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY) as? [String]
-
+        
         if lastSavedConversion?.count ?? 0 > 0 {
             
             // Setting the conversion to the input text fields
@@ -328,15 +328,15 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
                 UserDefaults.standard.set(liquidVolumeHistory, forKey: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Success", message: "The liquid volume conversion was successfully saved.")
+                showAlert(title: Alert.Success.title, message:Alert.Success.LiquidVolume.message)
             }else{
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Warning", message: "The liquid volume conversion is already saved")
+                showAlert(title: Alert.Warning.title, message:Alert.Warning.LiquidVolume.message)
             }
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
+            showAlert(title: Alert.Error.title, message: Alert.Error.message)
             
         }
     }

@@ -358,16 +358,16 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
                 UserDefaults.standard.set(volumeHistory, forKey: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Success", message: "The volume conversion was successfully saved.")
+                showAlert(title: Alert.Success.title, message:Alert.Success.Volume.message)
                 
             }else{
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Warning", message: "The volume conversion is already saved")
+                showAlert(title: Alert.Warning.title, message: Alert.Warning.Volume.message)
             }
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
+            showAlert(title: Alert.Error.title, message: Alert.Error.message)
             
         }
     }

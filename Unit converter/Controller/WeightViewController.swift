@@ -277,7 +277,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
                         
                         /// Rounding off to 4 decimal places by default
                         let roundedResult = result.truncate(places: self.decimalDigit)
-
+                        
                         textField.text = String(roundedResult)
                         separateStonePounds()
                     }
@@ -358,15 +358,16 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Success", message: "The weight conversion was successfully saved.")
+                showAlert(title: Alert.Success.title, message: Alert.Success.Weight.message)
+                
             }else{
                 /// showAlert method is defined in the  UIViewControllerHelper
-                showAlert(title: "Warning", message: "The weight conversion is already saved")
+                showAlert(title: Alert.Warning.title, message: Alert.Warning.Weight.message)
             }
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Error", message: "You are trying to save an empty conversion.")
+            showAlert(title: Alert.Error.title, message: Alert.Error.message)
             
         }
     }

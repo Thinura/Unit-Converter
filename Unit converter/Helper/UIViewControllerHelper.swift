@@ -33,7 +33,7 @@ extension UIViewController{
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         /// Defining the alert action
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: AlertAction.OK.rawValue, style: .default, handler: nil))
         
         /// Initialising alert to the view
         self.present(alert, animated: true, completion: nil)
