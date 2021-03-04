@@ -8,7 +8,7 @@
 import UIKit
 
 struct UIImageIcon {
-    struct History {
+    struct HistoryIcon {
         static let weightIcon = UIImage(named: "icon_history_weight")
         static let temperatureIcon = UIImage(named: "icon_history_temperature")
         static let volumeIcon = UIImage(named: "icon_history_volume")

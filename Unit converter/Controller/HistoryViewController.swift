@@ -13,7 +13,7 @@ class HistoryViewController: UIViewController {
     var allHistory = [History]()
     var conversionType = UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY
     var lastAddedConversionType = UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY
-    var icon: UIImage = UIImageIcon.History.weightIcon!
+    var icon: UIImage = UIImageIcon.HistoryIcon.weightIcon!
     
     @IBOutlet weak var historyTableView: UITableView!
     @IBOutlet weak var historySegmentControl: UISegmentedControl!
@@ -57,24 +57,24 @@ class HistoryViewController: UIViewController {
         case 0:
             conversionType = UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY
             lastAddedConversionType = UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY
-            icon = UIImageIcon.History.weightIcon!
+            icon = UIImageIcon.HistoryIcon.weightIcon!
         case 1:
             conversionType = UserDefaultsKeys.Temperature.TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY
             lastAddedConversionType = UserDefaultsKeys.Temperature.LAST_TEMPERATURE_CONVERSION_USER_DEFAULTS_KEY
-            icon = UIImageIcon.History.temperatureIcon!
+            icon = UIImageIcon.HistoryIcon.temperatureIcon!
         case 2:
             conversionType = UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY
             lastAddedConversionType = UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY
-            icon = UIImageIcon.History.volumeIcon!
+            icon = UIImageIcon.HistoryIcon.volumeIcon!
         case 3:
             conversionType = UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_KEY
             lastAddedConversionType = UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY
-            icon = UIImageIcon.History.speedIcon!
+            icon = UIImageIcon.HistoryIcon.speedIcon!
         case 4:
             conversionType = UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY
             lastAddedConversionType = UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY
             icon = UIImageIcon
-                .History.lengthIcon!
+                .HistoryIcon.lengthIcon!
         default:
             break
         }
@@ -97,7 +97,7 @@ class HistoryViewController: UIViewController {
             }
             /// adding liquid volume to the history
             let conversionTypeLV = UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY
-            let liquidVolumeIcon = UIImageIcon.History.liquidVolumeIcon!
+            let liquidVolumeIcon = UIImageIcon.HistoryIcon.liquidVolumeIcon!
             let historyListLiquidVolume = UserDefaults.standard.value(forKey: conversionTypeLV) as? [String]
             if historyListLiquidVolume?.count ?? 0 > 0 {
                 for conversion in historyListLiquidVolume! {
@@ -148,7 +148,7 @@ class HistoryViewController: UIViewController {
             UserDefaults.standard.set([], forKey: conversionType)
             UserDefaults.standard.set([],forKey: lastAddedConversionType)
             
-            showAlert(title: "Success", message: "The saved conversions were successfully deleted.")
+            showAlert(title: Alert.Success.title, message: Alert.Success.History.message)
             
             /// refresh history screen
             generateHistoryCells(type: conversionType, icon: icon)
@@ -167,7 +167,7 @@ extension HistoryViewController:UITableViewDataSource,UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if allHistory.count == 0 {
             
-            self.historyTableView.setEmptyMessage("No saved conversions found",UIColor.label)
+            self.historyTableView.setEmptyMessage(EmptyConversion.message.rawValue,UIColor.label)
         } else {
             self.historyTableView.restore()
         }

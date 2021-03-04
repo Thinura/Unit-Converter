@@ -11,6 +11,10 @@ enum AlertAction: String {
     case OK = "Ok"
 }
 
+enum EmptyConversion: String{
+    case message = "No saved conversions found"
+}
+
 struct Alert {
     struct Success {
         static let title = "Successfully Saved!"
@@ -31,6 +35,9 @@ struct Alert {
         }
         struct Speed {
             static let message = "The speed conversion was successfully saved in history."
+        }
+        struct History {
+            static let message = "The saved conversions were successfully deleted."
         }
     }
     
@@ -63,3 +70,4 @@ struct Alert {
         
     }
 }
+
