@@ -14,17 +14,4 @@ class TabBarViewController: UITabBarController,UITabBarControllerDelegate {
 
         self.delegate = self
     }
-    
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        switch viewController{
-        case is ConversionsViewController:
-            print("User is in in Conversions view")
-        case is HistoryViewController:
-            print("User is in in history view")
-        case is SettingsViewController:
-            print("User is in in settings view")
-        default:
-            print("No screen available")
-        }
-    }
 }

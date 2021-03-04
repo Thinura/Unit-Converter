@@ -8,8 +8,8 @@
 import UIKit
 
 /// Temperature conversions are saved by type "temperature" in User defaults
-let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY = "temperature"
-private let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+//let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY = "temperature"
+//private let TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
 
 class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     
@@ -29,7 +29,9 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     @IBOutlet weak var celsiusInputTextField: UITextField!
     @IBOutlet weak var fahrenheitInputTextField: UITextField!
     @IBOutlet weak var kelvinInputTextField: UITextField!
-    
+    var temperatureInputTextFields: [UITextField] {
+        return [celsiusInputTextField, fahrenheitInputTextField,kelvinInputTextField]
+    }
     /// Stack views for input fields
     @IBOutlet weak var celsiusStackView: UIStackView!
     @IBOutlet weak var fahrenheitStackView: UIStackView!
@@ -40,22 +42,14 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
         
-        ///After loading checking whether the input fields are empty or not
-        checkAvailabilityRightBarButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
         settingUpCustomKeyboard()
         
         settingUpDecimal()
-        // Changing the values if decimal changed
-        if !isInputTextFieldEmpty(){
-            // Change according to the decimal digit but not active input field
-            handleInputTextField(activeInputTextField)
-        }
         
     }
     
@@ -77,13 +71,57 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         /// Reading from user defaults
-        let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
+        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
+        // Default value will be set to 4 decimal points
+        let decimal = ((userDefaultDecimalDigit ?? "4") as NSString).integerValue
         
-        if (decimal != nil){
-            self.decimalDigit = Int(decimal!) ?? 0
+        if !activeInputTextField.text!.isEmpty {
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            // Change according to the decimal digit but not active input field
+            checkWhichTextFieldPressed(sender: activeInputTextField)
+            
+        }else{
+            // Load last saved data
+            loadLastConversion()
+            
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            checkWhichTextFieldPressed(sender:celsiusInputTextField)
+            
         }
     }
     
+    func checkWhichTextFieldPressed(sender:UITextField){
+        var unit: TemperatureMeasurementUnit?
+        
+        if sender.tag == 1 {
+            unit = TemperatureMeasurementUnit.celsius
+        } else if sender.tag == 2 {
+            unit = TemperatureMeasurementUnit.fahrenheit
+        } else if sender.tag == 3 {
+            unit = TemperatureMeasurementUnit.kelvin
+        }
+        
+        if unit != nil {
+            updateInputTextFields(textField: sender, temperatureUnit: unit!)
+        }
+    }
+    
+    // Load last conversion from user defaults
+    func loadLastConversion(){
+        /// Read from user defaults
+        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Temperature.LAST_TEMPERATURE_CONVERSION_USER_DEFAULTS_KEY) as? [String]
+        
+        if lastSavedConversion?.count ?? 0 > 0 {
+            
+            // Setting the conversion to the input text fields
+            celsiusInputTextField.text = lastSavedConversion![0]
+            fahrenheitInputTextField.text = lastSavedConversion![1]
+            kelvinInputTextField.text = lastSavedConversion![2]
+        }
+        
+    }
     
     /**
      This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
@@ -142,7 +180,7 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
             }
         }
     }
-
+    
     /**
      This function finds the first responder in a UIView
      - Parameter inView: The corresponding UIView.
@@ -162,31 +200,24 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     
     /// listening which input was typed
     @IBAction func handleInputTextField(_ sender: UITextField) {
-        var unit: TemperatureMeasurementUnit?
         
-        if sender.tag == 1 {
-            unit = TemperatureMeasurementUnit.celsius
-        } else if sender.tag == 2 {
-            unit = TemperatureMeasurementUnit.fahrenheit
-        } else if sender.tag == 3 {
-            unit = TemperatureMeasurementUnit.kelvin
-        }
+        checkWhichTextFieldPressed(sender: sender)
         
-        if unit != nil {
-            updateInputTextFields(textField: sender, temperatureUnit: unit!)
-        }
-        
-        checkAvailabilityRightBarButton()
+        checkAvailabilityRightBarButtons()
     }
     
     
     
     /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButton() {
-        if isInputTextFieldEmpty() {
-            self.navigationItem.rightBarButtonItem!.isEnabled = false;
-        } else {
-            self.navigationItem.rightBarButtonItem!.isEnabled = true;
+    func checkAvailabilityRightBarButtons() {
+        // Getting access on last two right navigation bar buttons
+        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
+        for button in rightBarButtons {
+            if isInputTextFieldEmpty() {
+                button.isEnabled = false
+            }else{
+                button.isEnabled = true
+            }
         }
     }
     
@@ -214,7 +245,7 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
             if input.isEmpty{
                 
                 ///Clear the input text fields when its empty
-                clearTextFields()
+                clearTextFields(inputTextFields:temperatureInputTextFields)
                 
             }else{
                 if let value = Double(input as String){
@@ -260,24 +291,36 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
         if !isInputTextFieldEmpty(){
+            
+            let lastAddData = [celsiusInputTextField.text!, fahrenheitInputTextField.text!,kelvinInputTextField.text!] as [String]
+            
+            
             let conversion = "\(celsiusInputTextField.text!) °C = \(fahrenheitInputTextField.text!) °F = \(kelvinInputTextField.text!) K"
             
             /// Getting initial history data
-            var temperatureHistory = UserDefaults.standard.array(forKey: TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
+            var temperatureHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Temperature.TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
-            /// Check whether there are maximum amount of temperature conversions if so first value will be removed
-            if temperatureHistory.count >= TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                temperatureHistory = Array(temperatureHistory.suffix(TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+            if (!checkConversionIsAlreadySaved(historyList: temperatureHistory, conversion: conversion)){
+                /// Check whether there are maximum amount of temperature conversions if so first value will be removed
+                if temperatureHistory.count >= UserDefaultsKeys.Temperature.TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
+                    temperatureHistory = Array(temperatureHistory.suffix(UserDefaultsKeys.Temperature.TEMPERATURE_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+                }
+                temperatureHistory.append(conversion)
+                
+                /// Add last added conversion
+                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Temperature.LAST_TEMPERATURE_CONVERSION_USER_DEFAULTS_KEY)
+                
+                /// Saving data in user defaults
+                UserDefaults.standard.set(temperatureHistory, forKey: UserDefaultsKeys.Temperature.TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Success", message: "The temperature conversion was successfully saved.")
+                
+            }else{
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Warning", message: "The temperature conversion is already saved")
             }
-            temperatureHistory.append(conversion)
-            
-            /// Saving data in user defaults
-            UserDefaults.standard.set(temperatureHistory, forKey: TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY)
-            
-            
-            /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Success", message: "The temperature conversion was successfully saved.")
-            
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
@@ -288,15 +331,32 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     }
     
     /// This function clears all the text fields
-    func clearTextFields() {
-        celsiusInputTextField.text = ""
-        fahrenheitInputTextField.text = ""
-        kelvinInputTextField.text = ""
+    func clearTextFields(inputTextFields:[UITextField]) {
+        for textInputField in inputTextFields{
+            textInputField.text = ""
+        }
+        checkAvailabilityRightBarButtons()
+    }
+    
+    @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
+        if !isInputTextFieldEmpty(){
+            ///Clear the input text fields when its empty
+            clearTextFields(inputTextFields: temperatureInputTextFields)
+        }
+    }
+    
+    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
+        for historyListConversion in historyList {
+            if (historyListConversion == conversion){
+                return true
+            }
+        }
+        return false
     }
     
     /**
      This function will only trigger when custom keyboard in use
-        - Parameter key:Int
+     - Parameter key:Int
      */
     func customKeyboardNumericKeysHandle(key: Int) {
         print("Number pressed is \(key)")
@@ -311,7 +371,7 @@ class TemperatureViewController: UIViewController, CustomKeyboardDelegate {
     
     /**
      This function will only trigger when custom keyboard in use
-        - Parameter symbol:String
+     - Parameter symbol:String
      */
     func customKeyboardSymbolKeyHandle(symbol: String) {
         print("Symbol button triggered is \(symbol)")

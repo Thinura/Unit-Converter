@@ -7,10 +7,6 @@
 
 import UIKit
 
-/// Speed conversions are saved by type "speed" in User defaults
-let SPEED_CONVERSIONS_USER_DEFAULTS_KEY = "speed"
-private let SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
-
 class SpeedViewController: UIViewController,CustomKeyboardDelegate {
     
     /// Defaults
@@ -30,7 +26,9 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
     @IBOutlet weak var kilometreHourInputTextField: UITextField!
     @IBOutlet weak var milesHourInputTextField: UITextField!
     @IBOutlet weak var knotInputTextField: UITextField!
-    
+    var speedInputTextFields:[UITextField] {
+        return [metresSecondInputTextField, kilometreHourInputTextField, milesHourInputTextField, knotInputTextField ]
+    }
     /// Stack views for input fields
     @IBOutlet weak var metresSecondStackView: UIStackView!
     @IBOutlet weak var kilometreHourStackView: UIStackView!
@@ -42,8 +40,7 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
         super.viewDidLoad()
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
-        ///After loading checking whether the input fields are empty or not
-        checkAvailabilityRightBarButton()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,11 +49,7 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
         settingUpCustomKeyboard()
         
         settingUpDecimal()
-        // Changing the values if decimal changed
-        if !isInputTextFieldEmpty(){
-            // Change according to the decimal digit but not active input field
-            handleInputTextField(activeInputTextField)
-        }
+        
     }
     
     /// This function setting up the custom keyboard
@@ -76,11 +69,59 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         /// Reading from user defaults
-        let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
+        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
+        // Default value will be set to 4 decimal points
+        let decimal = ((userDefaultDecimalDigit ?? "4") as NSString).integerValue
         
-        if (decimal != nil){
-            self.decimalDigit = Int(decimal!) ?? 0
+        if !activeInputTextField.text!.isEmpty {
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            // Change according to the decimal digit but not active input field
+            checkWhichTextFieldPressed(sender: activeInputTextField)
+            
+        }else{
+            // Load last saved data
+            loadLastConversion()
+            
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            checkWhichTextFieldPressed(sender:metresSecondInputTextField)
+            
         }
+    }
+    
+    func checkWhichTextFieldPressed(sender:UITextField){
+        var unit: SpeedMeasurementUnit?
+        
+        if sender.tag == 1 {
+            unit = SpeedMeasurementUnit.metresSecond
+        } else if sender.tag == 2 {
+            unit = SpeedMeasurementUnit.kilometreHour
+        } else if sender.tag == 3 {
+            unit = SpeedMeasurementUnit.milesHour
+        }else if sender.tag == 4 {
+            unit = SpeedMeasurementUnit.knot
+        }
+        
+        if unit != nil {
+            updateInputTextFields(textField: sender, speedUnit: unit!)
+        }
+    }
+    
+    // Load last conversion from user defaults
+    func loadLastConversion(){
+        /// Read from user defaults
+        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY) as? [String]
+        
+        if lastSavedConversion?.count ?? 0 > 0 {
+            
+            // Setting the conversion to the input text fields
+            metresSecondInputTextField.text = lastSavedConversion![0]
+            kilometreHourInputTextField.text = lastSavedConversion![1]
+            milesHourInputTextField.text = lastSavedConversion![2]
+            knotInputTextField.text = lastSavedConversion![2]
+        }
+        
     }
     
     /**
@@ -140,7 +181,7 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
             }
         }
     }
-
+    
     /**
      This function finds the first responder in a UIView
      - Parameter inView: The corresponding UIView.
@@ -159,34 +200,25 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
     }
     
     /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButton() {
-        if isInputTextFieldEmpty() {
-            self.navigationItem.rightBarButtonItem!.isEnabled = false;
-        } else {
-            self.navigationItem.rightBarButtonItem!.isEnabled = true;
+    func checkAvailabilityRightBarButtons() {
+        // Getting access on last two right navigation bar buttons
+        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
+        for button in rightBarButtons {
+            if isInputTextFieldEmpty() {
+                button.isEnabled = false
+            }else{
+                button.isEnabled = true
+            }
         }
     }
     
     
     /// listening which input was typed
     @IBAction func handleInputTextField(_ sender: UITextField) {
-        var unit: SpeedMeasurementUnit?
         
-        if sender.tag == 1 {
-            unit = SpeedMeasurementUnit.metresSecond
-        } else if sender.tag == 2 {
-            unit = SpeedMeasurementUnit.kilometreHour
-        } else if sender.tag == 3 {
-            unit = SpeedMeasurementUnit.milesHour
-        }else if sender.tag == 4 {
-            unit = SpeedMeasurementUnit.knot
-        }
+        checkWhichTextFieldPressed(sender: sender)
         
-        if unit != nil {
-            updateInputTextFields(textField: sender, speedUnit: unit!)
-        }
-        
-        checkAvailabilityRightBarButton()
+        checkAvailabilityRightBarButtons()
     }
     
     
@@ -214,18 +246,19 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
             if input.isEmpty{
                 
                 ///Clear the input text fields when its empty
-                clearTextFields()
+                clearTextFields(inputTextFields: speedInputTextFields)
                 
             }else{
+                
                 if let value = Double(input as String){
-                    let temperature = Speed(unit: speedUnit, value: value)
+                    let speed = Speed(unit: speedUnit, value: value)
                     
                     for _unit in SpeedMeasurementUnit.getAvailableSpeedUnits{
                         if _unit == speedUnit{
                             continue
                         }
                         let textField = mapUnitToTextField(speedUnit: _unit)
-                        let result = temperature.convert(unit: _unit)
+                        let result = speed.convert(unit: _unit)
                         
                         // Rounding off to 4 decimal places by default
                         let roundedResult = result.truncate(places: self.decimalDigit)
@@ -257,33 +290,38 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
         return textField!
     }
     
-    /// This function clears all the text fields
-    func clearTextFields() {
-        metresSecondInputTextField.text = ""
-        kilometreHourInputTextField.text = ""
-        milesHourInputTextField.text = ""
-        knotInputTextField.text = ""
-    }
-    
+    /**
+     This function handle the save buttons' functionality which only can be save 5 conversions
+     */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
         if !isInputTextFieldEmpty(){
+            let lastAddData = [metresSecondInputTextField.text!, kilometreHourInputTextField.text!,milesHourInputTextField.text!, knotInputTextField.text!] as [String]
+            
             let conversion = "\(metresSecondInputTextField.text!) ms/s = \(kilometreHourInputTextField.text!) km/h = \(milesHourInputTextField.text!) mi/h = \(knotInputTextField.text!) knots"
             
             /// Getting initial history data
-            var speedHistory = UserDefaults.standard.array(forKey: SPEED_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
+            var speedHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
-            /// Check whether there are maximum amount of temperature conversions if so first value will be removed
-            if speedHistory.count >= SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                speedHistory = Array(speedHistory.suffix(SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+            if (!checkConversionIsAlreadySaved(historyList: speedHistory, conversion: conversion)){
+                
+                /// Check whether there are maximum amount of speed conversions if so first value will be removed
+                if speedHistory.count >= UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
+                    speedHistory = Array(speedHistory.suffix(UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+                }
+                speedHistory.append(conversion)
+                
+                /// Add last added conversion
+                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY)
+                
+                /// Saving data in user defaults
+                UserDefaults.standard.set(speedHistory, forKey: UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Success", message: "The speed conversion was successfully saved.")
+            }else{
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Warning", message: "The speed conversion is already saved")
             }
-            speedHistory.append(conversion)
-            
-            /// Saving data in user defaults
-            UserDefaults.standard.set(speedHistory, forKey: SPEED_CONVERSIONS_USER_DEFAULTS_KEY)
-            
-            /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Success", message: "The speed conversion was successfully saved.")
-            
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
@@ -292,9 +330,33 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
         }
     }
     
+    /// This function clears all the text fields
+    func clearTextFields(inputTextFields:[UITextField]) {
+        for textInputField in inputTextFields{
+            textInputField.text = ""
+        }
+        checkAvailabilityRightBarButtons()
+    }
+    
+    @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
+        if !isInputTextFieldEmpty(){
+            ///Clear the input text fields when its empty
+            clearTextFields(inputTextFields: speedInputTextFields)
+        }
+    }
+    
+    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
+        for historyListConversion in historyList {
+            if (historyListConversion == conversion){
+                return true
+            }
+        }
+        return false
+    }
+    
     /**
      This function will only trigger when custom keyboard in use
-        - Parameter key:Int
+     - Parameter key:Int
      */
     func customKeyboardNumericKeysHandle(key: Int) {
         print("Number pressed is \(key)")
@@ -309,7 +371,7 @@ class SpeedViewController: UIViewController,CustomKeyboardDelegate {
     
     /**
      This function will only trigger when custom keyboard in use
-        - Parameter symbol:String
+     - Parameter symbol:String
      */
     func customKeyboardSymbolKeyHandle(symbol: String) {
         print("Symbol button triggered is \(symbol)")

@@ -11,9 +11,9 @@ class HistoryViewController: UIViewController {
     
     /// Default variables
     var allHistory = [History]()
-    
-    var conversionType = WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY
-    var icon: UIImage = UIImage(named: "icon_history_weight")!
+    var conversionType = UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY
+    var lastAddedConversionType = UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY
+    var icon: UIImage = UIImageIcon.History.weightIcon!
     
     @IBOutlet weak var historyTableView: UITableView!
     @IBOutlet weak var historySegmentControl: UISegmentedControl!
@@ -55,17 +55,26 @@ class HistoryViewController: UIViewController {
         
         switch index {
         case 0:
-            conversionType = WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY
-            icon = UIImage(named: "icon_history_weight")!
+            conversionType = UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY
+            lastAddedConversionType = UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY
+            icon = UIImageIcon.History.weightIcon!
         case 1:
-            conversionType = TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY
-            icon = UIImage(named: "icon_history_temperature")!
+            conversionType = UserDefaultsKeys.Temperature.TEMPERATURE_CONVERSIONS_USER_DEFAULTS_KEY
+            lastAddedConversionType = UserDefaultsKeys.Temperature.LAST_TEMPERATURE_CONVERSION_USER_DEFAULTS_KEY
+            icon = UIImageIcon.History.temperatureIcon!
         case 2:
-            conversionType = VOLUME_CONVERSIONS_USER_DEFAULTS_KEY
-            icon = UIImage(named: "icon_history_volume")!
+            conversionType = UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY
+            lastAddedConversionType = UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY
+            icon = UIImageIcon.History.volumeIcon!
         case 3:
-            conversionType = SPEED_CONVERSIONS_USER_DEFAULTS_KEY
-            icon = UIImage(named: "icon_history_speed")!
+            conversionType = UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_KEY
+            lastAddedConversionType = UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY
+            icon = UIImageIcon.History.speedIcon!
+        case 4:
+            conversionType = UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY
+            lastAddedConversionType = UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY
+            icon = UIImageIcon
+                .History.lengthIcon!
         default:
             break
         }
@@ -77,7 +86,7 @@ class HistoryViewController: UIViewController {
     func generateHistoryCells(type: String, icon: UIImage) {
         allHistory = []
         ///Check conversion is volume
-        if conversionType == VOLUME_CONVERSIONS_USER_DEFAULTS_KEY{
+        if conversionType == UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY{
             /// adding volume to the history list
             let historyListVolume = UserDefaults.standard.value(forKey: conversionType) as? [String]
             if historyListVolume?.count ?? 0 > 0 {
@@ -87,12 +96,12 @@ class HistoryViewController: UIViewController {
                 }
             }
             /// adding liquid volume to the history
-            conversionType = LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY
-            let liquidVolumeIcon = UIImage(named: "icon_history_liquid_volume")!
-            let historyListLiquidVolume = UserDefaults.standard.value(forKey: conversionType) as? [String]
+            let conversionTypeLV = UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY
+            let liquidVolumeIcon = UIImageIcon.History.liquidVolumeIcon!
+            let historyListLiquidVolume = UserDefaults.standard.value(forKey: conversionTypeLV) as? [String]
             if historyListLiquidVolume?.count ?? 0 > 0 {
                 for conversion in historyListLiquidVolume! {
-                    let history = History(type: conversionType,icon: liquidVolumeIcon, conversionDetails: conversion)
+                    let history = History(type: conversionTypeLV,icon: liquidVolumeIcon, conversionDetails: conversion)
                     allHistory += [history]
                 }
             }
@@ -127,12 +136,17 @@ class HistoryViewController: UIViewController {
         if allHistory.count > 0 {
             
             /// Clearing Liquid volume and volume
-            if (conversionType == VOLUME_CONVERSIONS_USER_DEFAULTS_KEY || conversionType == LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY){
-                UserDefaults.standard.set([], forKey: VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
-                UserDefaults.standard.set([], forKey: VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+            if (conversionType == UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY || conversionType == UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY){
+                //Volume UserDefaults clear
+                UserDefaults.standard.set([], forKey: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                UserDefaults.standard.set([], forKey: UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
+                //Liquid Volume UserDefaults clear
+                UserDefaults.standard.set([], forKey: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                UserDefaults.standard.set([], forKey: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
             }
             
             UserDefaults.standard.set([], forKey: conversionType)
+            UserDefaults.standard.set([],forKey: lastAddedConversionType)
             
             showAlert(title: "Success", message: "The saved conversions were successfully deleted.")
             
@@ -145,7 +159,6 @@ class HistoryViewController: UIViewController {
     
     
 }
-
 
 
 extension HistoryViewController:UITableViewDataSource,UITableViewDelegate{
@@ -170,10 +183,6 @@ extension HistoryViewController:UITableViewDataSource,UITableViewDelegate{
         
         // History cell styles
         cell.isUserInteractionEnabled = false
-        /*cell.contentView.backgroundColor = UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.00)
-         cell.contentView.layer.cornerRadius = 10.0
-         cell.contentView.layer.borderWidth = 1.0
-         cell.contentView.layer.borderColor = UIColor(red: 0.25, green: 0.25, blue: 0.25, alpha: 1.00).cgColor*/
         cell.contentView.layer.masksToBounds = false
         
         return cell

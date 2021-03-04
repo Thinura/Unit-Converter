@@ -7,10 +7,6 @@
 
 import UIKit
 
-/// Volume conversions are saved by type "volume" in User defaults
-let VOLUME_CONVERSIONS_USER_DEFAULTS_KEY = "volume"
-private let VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
-
 class VolumeViewController: UIViewController, CustomKeyboardDelegate {
     
     /// Defaults
@@ -32,7 +28,9 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
     @IBOutlet weak var cuInchInputTextField: UITextField!
     @IBOutlet weak var cuFootInputTextField: UITextField!
     @IBOutlet weak var cuYardInputTextField: UITextField!
-    
+    var volumeInputTextFields: [UITextField] {
+        return [cuMillimetreInputTextField, cuCentimetreInputTextField, cuMetreInputTextField, cuInchInputTextField, cuFootInputTextField, cuYardInputTextField]
+    }
     /// Stack views for Input Fields
     @IBOutlet weak var cuMillimetreStackView: UIStackView!
     @IBOutlet weak var cuCentimetreStackView: UIStackView!
@@ -45,20 +43,14 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
         super.viewDidLoad()
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
-        ///After loading checking whether the input fields are empty or not
-        checkAvailabilityRightBarButton()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override  func viewWillAppear(_ animated: Bool) {
         
         settingUpCustomKeyboard()
         
         settingUpDecimal()
-        // Changing the values if decimal changed
-        if !isInputTextFieldEmpty(){
-            // Change according to the decimal digit but not active input field
-            handleInputTextField(activeInputTextField)
-        }
+        
     }
     
     /// This function setting up the custom keyboard
@@ -77,14 +69,70 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
         
     }
     
+    
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         /// Reading from user defaults
-        let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
+        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
+        // Default value will be set to 4 decimal points
+        let decimal = ((userDefaultDecimalDigit ?? "4") as NSString).integerValue
         
-        if (decimal != nil){
-            self.decimalDigit = Int(decimal!) ?? 0
+        
+        if !activeInputTextField.text!.isEmpty {
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            // Change according to the decimal digit but not active input field
+            checkWhichTextFieldPressed(sender: activeInputTextField)
+            
+        }else{
+            // Load last saved data
+            loadLastConversion()
+            
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            checkWhichTextFieldPressed(sender: cuMillimetreInputTextField)
+            
         }
+    }
+    
+    func checkWhichTextFieldPressed(sender:UITextField){
+        var volumeUnit: VolumeMeasurementUnit?
+        
+        /// Checking whether which input field is pressed
+        if sender.tag == 1 {
+            volumeUnit = VolumeMeasurementUnit.cuMillimetre
+        } else if sender.tag == 2 {
+            volumeUnit = VolumeMeasurementUnit.cuCentimetre
+        } else if sender.tag == 3 {
+            volumeUnit = VolumeMeasurementUnit.cuMetre
+        } else if sender.tag == 4 {
+            volumeUnit = VolumeMeasurementUnit.cuInch
+        } else if sender.tag == 5 {
+            volumeUnit = VolumeMeasurementUnit.cuFoot
+        } else if sender.tag == 6 {
+            volumeUnit = VolumeMeasurementUnit.cuYard
+        }
+        
+        if volumeUnit != nil {
+            updateInputTextFields(textField: sender, volumeUnit: volumeUnit!)
+        }
+    }
+    
+    // Load last conversion from user defaults
+    func loadLastConversion(){
+        /// Read from user defaults
+        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY) as? [String]
+        
+        if lastSavedConversion?.count ?? 0 > 0 {
+            
+            cuMillimetreInputTextField.text = lastSavedConversion![0]
+            cuCentimetreInputTextField.text = lastSavedConversion![1]
+            cuInchInputTextField.text = lastSavedConversion![2]
+            cuMetreInputTextField.text = lastSavedConversion![3]
+            cuFootInputTextField.text = lastSavedConversion![4]
+            cuYardInputTextField.text = lastSavedConversion![5]
+        }
+        
     }
     
     /**
@@ -161,43 +209,51 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
         }
         return nil
     }
-
+    
     
     
     /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButton() {
-        if isInputTextFieldEmpty() {
-            self.navigationItem.rightBarButtonItem!.isEnabled = false;
-        }
-        else {
-            self.navigationItem.rightBarButtonItem!.isEnabled = true;
+    func checkAvailabilityRightBarButtons() {
+        // Getting access on last two right navigation bar buttons
+        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
+        for button in rightBarButtons {
+            if isInputTextFieldEmpty() {
+                button.isEnabled = false
+            }else{
+                button.isEnabled = true
+            }
         }
     }
     
     
     @IBAction func handleInputTextField(_ sender: UITextField) {
-        var volumeUnit: VolumeMeasurementUnit?
         
-        /// Checking whether which input field is pressed
-        if sender.tag == 1 {
-            volumeUnit = VolumeMeasurementUnit.cuMillimetre
-        } else if sender.tag == 2 {
-            volumeUnit = VolumeMeasurementUnit.cuCentimetre
-        } else if sender.tag == 3 {
-            volumeUnit = VolumeMeasurementUnit.cuMetre
-        } else if sender.tag == 4 {
-            volumeUnit = VolumeMeasurementUnit.cuInch
-        } else if sender.tag == 5 {
-            volumeUnit = VolumeMeasurementUnit.cuFoot
-        } else if sender.tag == 6 {
-            volumeUnit = VolumeMeasurementUnit.cuYard
+        checkWhichTextFieldPressed(sender: sender)
+        checkAvailabilityRightBarButtons()
+    }
+    
+    /// This function clears all the text fields
+    func clearTextFields(inputTextFields:[UITextField]) {
+        for textInputField in inputTextFields{
+            textInputField.text = ""
         }
-        
-        if volumeUnit != nil {
-            updateInputTextFields(textField: sender, volumeUnit: volumeUnit!)
+        checkAvailabilityRightBarButtons()
+    }
+    
+    @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
+        if !isInputTextFieldEmpty(){
+            ///Clear the input text fields when its empty
+            clearTextFields(inputTextFields: volumeInputTextFields)
         }
-        
-        checkAvailabilityRightBarButton()
+    }
+    
+    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
+        for historyListConversion in historyList {
+            if (historyListConversion == conversion){
+                return true
+            }
+        }
+        return false
     }
     
     /**
@@ -213,19 +269,9 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
         return true
     }
     
-    /// This function clears all the text fields
-    func clearTextFields() {
-        cuMillimetreInputTextField.text = ""
-        cuCentimetreInputTextField.text = ""
-        cuInchInputTextField.text = ""
-        cuMetreInputTextField.text = ""
-        cuFootInputTextField.text = ""
-        cuYardInputTextField.text = ""
-    }
-    
     /**
-     This function maps value to weight unit respectively
-     - Parameters: volumeUnit of the weight that user input
+     This function maps value to volume unit respectively
+     - Parameters: volumeUnit of the volume that user input
      - Returns: Respective UITextField
      */
     func mapUnitToTextField(volumeUnit: VolumeMeasurementUnit) -> UITextField {
@@ -258,19 +304,19 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
             if input.isEmpty {
                 
                 ///Clear the input text fields when its empty
-                clearTextFields()
+                clearTextFields(inputTextFields: volumeInputTextFields)
                 
             } else {
                 
                 if let value = Double(input as String) {
-                    let weight = Volume(unit: volumeUnit, value: value)
+                    let volume = Volume(unit: volumeUnit, value: value)
                     
                     for _unit in VolumeMeasurementUnit.getAvailableVolumeUnits {
                         if _unit == volumeUnit {
                             continue
                         }
                         let textField = mapUnitToTextField(volumeUnit: _unit)
-                        let result = weight.convert(unit: _unit)
+                        let result = volume.convert(unit: _unit)
                         
                         /// Rounding off to 4 decimal places by default
                         let roundedResult = result.truncate(places: self.decimalDigit)
@@ -287,23 +333,37 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate {
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
         if !isInputTextFieldEmpty(){
+            
+            let lastAddData = [cuMillimetreInputTextField.text!, cuCentimetreInputTextField.text!,cuInchInputTextField.text!,cuMetreInputTextField.text!, cuFootInputTextField.text!,cuYardInputTextField.text!] as [String]
+            
+            
             let conversion = "\(cuMillimetreInputTextField.text!) cu mm = \(cuCentimetreInputTextField.text!) cu cm = \(cuMetreInputTextField.text!) cu m = \(cuInchInputTextField.text!) cu in = \(cuFootInputTextField.text!) cu ft = \(cuYardInputTextField.text!) cu yd"
             
             /// Getting initial history data
-            var volumeHistory = UserDefaults.standard.array(forKey: VOLUME_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
+            var volumeHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
-            /// Check whether there are maximum amount of volume conversions if so first value will be removed
-            if volumeHistory.count >= VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                volumeHistory = Array(volumeHistory.suffix(VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+            if (!checkConversionIsAlreadySaved(historyList: volumeHistory, conversion: conversion)){
+                
+                /// Check whether there are maximum amount of volume conversions if so first value will be removed
+                if volumeHistory.count >= UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
+                    volumeHistory = Array(volumeHistory.suffix(UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+                }
+                volumeHistory.append(conversion)
+                
+                /// Add last added conversion
+                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
+                
+                
+                /// Saving data in user defaults
+                UserDefaults.standard.set(volumeHistory, forKey: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Success", message: "The volume conversion was successfully saved.")
+                
+            }else{
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Warning", message: "The volume conversion is already saved")
             }
-            volumeHistory.append(conversion)
-            
-            /// Saving data in user defaults
-            UserDefaults.standard.set(volumeHistory, forKey: VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
-            
-            /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Success", message: "The volume conversion was successfully saved.")
-            
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper

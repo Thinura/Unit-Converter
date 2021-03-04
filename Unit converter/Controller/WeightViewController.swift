@@ -7,9 +7,7 @@
 
 import UIKit
 
-/// Weight conversions are saved by type "weight" in User defaults
-let WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY = "weight"
-private let WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
+
 
 class WeightViewController: UIViewController, CustomKeyboardDelegate {
     
@@ -32,7 +30,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     @IBOutlet weak var poundInputField: UITextField!
     @IBOutlet weak var spStoneInputField: UITextField!
     @IBOutlet weak var spPoundInputField: UITextField!
-    
+    var weightInputTextFields: [UITextField] { return [kilogramInputTextField, gramInputTextField, ounceInputField, poundInputField, spStoneInputField, spPoundInputField]}
     ///Stack views for Input Fields
     @IBOutlet weak var kilogramStackView: UIStackView!
     @IBOutlet weak var gramStackView: UIStackView!
@@ -44,8 +42,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         super.viewDidLoad()
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
-        ///After loading checking whether the input fields are empty or not
-        checkAvailabilityRightBarButton()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,10 +51,23 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         settingUpCustomKeyboard()
         
         settingUpDecimal()
-        // Changing the values if decimal changed
-        if !isInputTextFieldEmpty(){
-            // Change according to the decimal digit but not active input field
-            handleInputTextField(activeInputTextField)
+    }
+    
+    // Load last conversion from user defaults
+    func loadLastConversion(){
+        /// Read from user defaults
+        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY) as? [String]
+        
+        if lastSavedConversion?.count ?? 0 > 0 {
+            
+            // Setting the conversion to the input text fields
+            kilogramInputTextField.text = lastSavedConversion![0]
+            gramInputTextField.text = lastSavedConversion![1]
+            ounceInputField.text = lastSavedConversion![2]
+            poundInputField.text = lastSavedConversion![3]
+            spStoneInputField.text = lastSavedConversion![4]
+            spPoundInputField.text = lastSavedConversion![5]
+            
         }
         
     }
@@ -83,10 +93,24 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         /// Reading from user defaults
-        let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
+        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
+        // Default value will be set to 4 decimal points
+        let decimal = ((userDefaultDecimalDigit ?? "4") as NSString).integerValue
         
-        if (decimal != nil){
-            self.decimalDigit = Int(decimal!) ?? 0
+        if !activeInputTextField.text!.isEmpty {
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            // Change according to the decimal digit but not active input field
+            checkWhichTextFieldPressed(sender: activeInputTextField)
+            
+        }else{
+            // Load last saved data
+            loadLastConversion()
+            
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            checkWhichTextFieldPressed(sender:kilogramInputTextField)
+            
         }
     }
     
@@ -153,6 +177,14 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     
     /// listening which input was typed 
     @IBAction func handleInputTextField(_ sender: UITextField) {
+        
+        checkWhichTextFieldPressed(sender: sender)
+        checkAvailabilityRightBarButtons()
+        
+    }
+    
+    
+    func checkWhichTextFieldPressed(sender:UITextField){
         var weightUnit: WeightMeasurementUnit?
         
         /// Checking whether which input field is pressed
@@ -169,13 +201,9 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         } else if sender.tag == 6 {
             weightUnit = WeightMeasurementUnit.stone
         }
-        
         if weightUnit != nil {
             updateInputTextFields(textField: sender, weightUnit: weightUnit!)
         }
-        
-        checkAvailabilityRightBarButton()
-        
     }
     
     /**
@@ -194,12 +222,17 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         }
         return nil
     }
+    
     /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButton() {
-        if isInputTextFieldEmpty() {
-            self.navigationItem.rightBarButtonItem!.isEnabled = false;
-        } else {
-            self.navigationItem.rightBarButtonItem!.isEnabled = true;
+    func checkAvailabilityRightBarButtons() {
+        
+        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
+        for button in rightBarButtons {
+            if isInputTextFieldEmpty() {
+                button.isEnabled = false
+            }else{
+                button.isEnabled = true
+            }
         }
     }
     
@@ -228,7 +261,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
             if input.isEmpty {
                 
                 ///Clear the input text fields when its empty
-                clearTextFields()
+                clearTextFields(inputTextFields: weightInputTextFields)
                 
             } else {
                 
@@ -244,7 +277,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
                         
                         /// Rounding off to 4 decimal places by default
                         let roundedResult = result.truncate(places: self.decimalDigit)
-                        
+
                         textField.text = String(roundedResult)
                         separateStonePounds()
                     }
@@ -254,13 +287,11 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     }
     
     /// This function clears all the text fields
-    func clearTextFields() {
-        kilogramInputTextField.text = ""
-        gramInputTextField.text = ""
-        ounceInputField.text = ""
-        poundInputField.text = ""
-        spPoundInputField.text = ""
-        spStoneInputField.text = ""
+    func clearTextFields(inputTextFields:[UITextField]) {
+        for textInputField in inputTextFields{
+            textInputField.text = ""
+        }
+        checkAvailabilityRightBarButtons()
     }
     
     /**
@@ -304,23 +335,34 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
         if !isInputTextFieldEmpty(){
-            let conversion = "\(gramInputTextField.text!) g = \(kilogramInputTextField.text!) kg = \(ounceInputField.text!) oz =  \(poundInputField.text!) lb = \(spStoneInputField.text!) stones & \(spPoundInputField.text!) pounds"
+            let lastAddData = [kilogramInputTextField.text!, gramInputTextField.text!,ounceInputField.text!,poundInputField.text!,spStoneInputField.text!,spPoundInputField.text!] as [String]
+            
+            let conversion = "\(gramInputTextField.text!) g = \(kilogramInputTextField.text!) kg = \(ounceInputField.text!) oz =  \(poundInputField.text!) lb = \(spStoneInputField.text!)  stones & \(spPoundInputField.text!) pounds"
             
             /// Getting initial history data
-            var weightHistory = UserDefaults.standard.array(forKey: WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
+            var weightHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
-            /// Check whether there are maximum amount of weight conversions if so first value will be removed 
-            if weightHistory.count >= WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                weightHistory = Array(weightHistory.suffix(WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+            if (!checkConversionIsAlreadySaved(historyList: weightHistory, conversion: conversion)){
+                /// Check whether there are maximum amount of weight conversions if so first value will be removed
+                if weightHistory.count >= UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
+                    weightHistory = Array(weightHistory.suffix(UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+                }
+                weightHistory.append(conversion)
+                
+                /// Add last added conversion
+                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY)
+                
+                /// Saving data in user defaults
+                UserDefaults.standard.set(weightHistory, forKey: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                self.navigationItem.rightBarButtonItem!.isEnabled = false;
+                
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Success", message: "The weight conversion was successfully saved.")
+            }else{
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Warning", message: "The weight conversion is already saved")
             }
-            weightHistory.append(conversion)
-            
-            /// Saving data in user defaults
-            UserDefaults.standard.set(weightHistory, forKey: WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY)
-            
-            /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Success", message: "The weight conversion was successfully saved.")
-            
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
@@ -329,9 +371,26 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
+    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
+        for historyListConversion in historyList {
+            if (historyListConversion == conversion){
+                return true
+            }
+        }
+        return false
+    }
+    
+    @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
+        if !isInputTextFieldEmpty(){
+            ///Clear the input text fields when its empty
+            clearTextFields(inputTextFields: weightInputTextFields)
+        }
+    }
+    
+    
     /**
      This function will only trigger when custom keyboard in use
-        - Parameter key:Int
+     - Parameter key:Int
      */
     func customKeyboardNumericKeysHandle(key: Int) {
         print("Number pressed is \(key)")
@@ -346,7 +405,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     
     /**
      This function will only trigger when custom keyboard in use
-        - Parameter symbol:String
+     - Parameter symbol:String
      */
     func customKeyboardSymbolKeyHandle(symbol: String) {
         print("Symbol button triggered is \(symbol)")

@@ -7,10 +7,6 @@
 
 import UIKit
 
-/// Length conversions are saved by type "length" in User defaults
-let LENGTH_CONVERSIONS_USER_DEFAULTS_KEY = "length"
-private let LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT = 5
-
 class LengthViewController: UIViewController, CustomKeyboardDelegate {
     
     /// Defaults
@@ -33,6 +29,9 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
     @IBOutlet weak var kilometreInputTextField: UITextField!
     @IBOutlet weak var mileInputTextField: UITextField!
     @IBOutlet weak var yardInputTextField: UITextField!
+    var lengthInputTextFields: [UITextField] {
+        return [millimetreInputTextField, centimetreInputTextField, inchInputTextField, metreInputTextField, kilometreInputTextField, mileInputTextField, yardInputTextField]
+    }
     
     /// Stack views for input fields
     @IBOutlet weak var millimetreStackView: UIStackView!
@@ -49,8 +48,6 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
         
-        ///After loading checking whether the input fields are empty or not
-        checkAvailabilityRightBarButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,11 +56,6 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
         settingUpCustomKeyboard()
         
         settingUpDecimal()
-        // Changing the values if decimal changed
-        if !isInputTextFieldEmpty(){
-            // Change according to the decimal digit but not active input field
-            handleInputTextField(activeInputTextField)
-        }
     }
     
     /// This function setting up the custom keyboard
@@ -86,11 +78,70 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         /// Reading from user defaults
-        let decimal = UserDefaults.standard.value(forKey: DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
+        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
+        // Default value will be set to 4 decimal points
+        let decimal = ((userDefaultDecimalDigit ?? "4") as NSString).integerValue
         
-        if (decimal != nil){
-            self.decimalDigit = Int(decimal!) ?? 0
+        if !activeInputTextField.text!.isEmpty {
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            // Change according to the decimal digit but not active input field
+            checkWhichTextFieldPressed(sender: activeInputTextField)
+            
+        }else{
+            // Load last saved data
+            loadLastConversion()
+            
+            // Inililzing user default decimal digit
+            self.decimalDigit = decimal
+            checkWhichTextFieldPressed(sender:millimetreInputTextField)
+            
         }
+    }
+    
+    func checkWhichTextFieldPressed(sender:UITextField){
+        var lengthUnit: LengthMeasurementUnit?
+        
+        if sender.tag == 1 {
+            lengthUnit = LengthMeasurementUnit.millimetre
+        } else if sender.tag == 2 {
+            lengthUnit = LengthMeasurementUnit.centimetre
+        } else if sender.tag == 3 {
+            lengthUnit = LengthMeasurementUnit.inch
+        }else if sender.tag == 4 {
+            lengthUnit = LengthMeasurementUnit.metre
+        } else if sender.tag == 5 {
+            lengthUnit = LengthMeasurementUnit.kilometre
+        } else if sender.tag == 6 {
+            lengthUnit = LengthMeasurementUnit.mile
+        }else if sender.tag == 7 {
+            lengthUnit = LengthMeasurementUnit.yard
+        }
+        
+        if lengthUnit != nil {
+            updateInputTextFields(textField: sender, lengthUnit: lengthUnit!)
+        }
+    }
+    
+    
+    // Load last conversion from user defaults
+    func loadLastConversion(){
+        /// Read from user defaults
+        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY) as? [String]
+        
+        if lastSavedConversion?.count ?? 0 > 0 {
+            
+            // Setting the conversion to the input text fields
+            millimetreInputTextField.text = lastSavedConversion![0]
+            centimetreInputTextField.text = lastSavedConversion![1]
+            inchInputTextField.text = lastSavedConversion![2]
+            metreInputTextField.text = lastSavedConversion![3]
+            kilometreInputTextField.text = lastSavedConversion![4]
+            yardInputTextField.text = lastSavedConversion![5]
+            mileInputTextField.text = lastSavedConversion![6]
+            
+        }
+        
     }
     
     /**
@@ -170,37 +221,21 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
     
     /// listening which input was typed
     @IBAction func handleInputTextField(_ sender: UITextField) {
-        var lengthUnit: LengthMeasurementUnit?
         
-        if sender.tag == 1 {
-            lengthUnit = LengthMeasurementUnit.millimetre
-        } else if sender.tag == 2 {
-            lengthUnit = LengthMeasurementUnit.centimetre
-        } else if sender.tag == 3 {
-            lengthUnit = LengthMeasurementUnit.inch
-        }else if sender.tag == 4 {
-            lengthUnit = LengthMeasurementUnit.metre
-        } else if sender.tag == 5 {
-            lengthUnit = LengthMeasurementUnit.kilometre
-        } else if sender.tag == 6 {
-            lengthUnit = LengthMeasurementUnit.mile
-        }else if sender.tag == 7 {
-            lengthUnit = LengthMeasurementUnit.yard
-        }
-        
-        if lengthUnit != nil {
-            updateInputTextFields(textField: sender, lengthUnit: lengthUnit!)
-        }
-        
-        checkAvailabilityRightBarButton()
+        checkWhichTextFieldPressed(sender: sender)
+        checkAvailabilityRightBarButtons()
     }
     
     /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButton() {
-        if isInputTextFieldEmpty() {
-            self.navigationItem.rightBarButtonItem!.isEnabled = false;
-        } else {
-            self.navigationItem.rightBarButtonItem!.isEnabled = true;
+    func checkAvailabilityRightBarButtons() {
+        // Getting access on last two right navigation bar buttons
+        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
+        for button in rightBarButtons {
+            if isInputTextFieldEmpty() {
+                button.isEnabled = false
+            }else{
+                button.isEnabled = true
+            }
         }
     }
     
@@ -228,7 +263,7 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
             if input.isEmpty{
                 
                 ///Clear the input text fields when its empty
-                clearTextFields()
+                clearTextFields(inputTextFields: lengthInputTextFields)
                 
             }else{
                 if let value = Double(input as String){
@@ -277,45 +312,68 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
         return textField!
     }
     
-    /// This function clears all the text fields
-    func clearTextFields() {
-        millimetreInputTextField.text = ""
-        centimetreInputTextField.text = ""
-        inchInputTextField.text = ""
-        metreInputTextField.text = ""
-        kilometreInputTextField.text = ""
-        yardInputTextField.text = ""
-        mileInputTextField.text = ""
-    }
-    
     /**
      This function handle the save buttons' functionality which only can be save 5 conversions
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
         if !isInputTextFieldEmpty(){
+            let lastAddData = [millimetreInputTextField.text!, centimetreInputTextField.text!,inchInputTextField.text!,metreInputTextField.text!, kilometreInputTextField.text!,yardInputTextField.text!, mileInputTextField.text!] as [String]
+            
             let conversion = "\(millimetreInputTextField.text!) mm = \(centimetreInputTextField.text!) cm = \(inchInputTextField.text!) inches = \(metreInputTextField.text!) m = \(mileInputTextField.text!) miles = \(yardInputTextField.text!) yards"
             
             /// Getting initial history data
-            var lengthHistory = UserDefaults.standard.array(forKey: SPEED_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
+            var lengthHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
-            /// Check whether there are maximum amount of temperature conversions if so first value will be removed
-            if lengthHistory.count >= LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                lengthHistory = Array(lengthHistory.suffix(LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+            if (!checkConversionIsAlreadySaved(historyList: lengthHistory, conversion: conversion)){
+                /// Check whether there are maximum amount of temperature conversions if so first value will be removed
+                if lengthHistory.count >= UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
+                    lengthHistory = Array(lengthHistory.suffix(UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
+                }
+                lengthHistory.append(conversion)
+                
+                /// Add last added conversion
+                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY)
+                
+                /// Saving data in user defaults
+                UserDefaults.standard.set(lengthHistory, forKey: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Success", message: "The length conversion was successfully saved.")
+                
+            }else{
+                /// showAlert method is defined in the  UIViewControllerHelper
+                showAlert(title: "Warning", message: "The length conversion is already saved")
             }
-            lengthHistory.append(conversion)
-            
-            /// Saving data in user defaults
-            UserDefaults.standard.set(lengthHistory, forKey: LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
-            
-            /// showAlert method is defined in the  UIViewControllerHelper
-            showAlert(title: "Success", message: "The length conversion was successfully saved.")
-            
         }else{
             
             /// showAlert method is defined in the  UIViewControllerHelper
             showAlert(title: "Error", message: "You are trying to save an empty conversion.")
             
         }
+    }
+    
+    /// This function clears all the text fields
+    func clearTextFields(inputTextFields:[UITextField]) {
+        for textInputField in inputTextFields{
+            textInputField.text = ""
+        }
+        checkAvailabilityRightBarButtons()
+    }
+    
+    @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
+        if !isInputTextFieldEmpty(){
+            ///Clear the input text fields when its empty
+            clearTextFields(inputTextFields: lengthInputTextFields)
+        }
+    }
+    
+    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
+        for historyListConversion in historyList {
+            if (historyListConversion == conversion){
+                return true
+            }
+        }
+        return false
     }
     
     /**

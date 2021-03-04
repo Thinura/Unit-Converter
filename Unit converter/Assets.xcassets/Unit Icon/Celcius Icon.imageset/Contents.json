@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "liqVolume_light.png",
+      "filename" : "celcius_light.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,7 +12,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "liqvolume_dark.png",
+      "filename" : "celcius_dark.png",
       "idiom" : "universal",
       "scale" : "1x"
     },

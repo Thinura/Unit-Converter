@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		29A55519137FFE8212F97C43 /* Pods_Unit_converter_Unit_converterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD23B151597E99308F2CAD4 /* Pods_Unit_converter_Unit_converterUITests.framework */; };
 		3611602325E2F9DC0063702E /* Temperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3611602225E2F9DC0063702E /* Temperature.swift */; };
+		3639B36F25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */; };
+		3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B37825EFDF3600ED6168 /* UIImageHelper.swift */; };
 		366B756325EAE02B00D26B92 /* UIColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366B756225EAE02B00D26B92 /* UIColorHelper.swift */; };
 		369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85C925D3EE78005C3B11 /* AppDelegate.swift */; };
 		369C85CC25D3EE78005C3B11 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85CB25D3EE78005C3B11 /* SceneDelegate.swift */; };
@@ -66,6 +68,8 @@
 
 /* Begin PBXFileReference section */
 		3611602225E2F9DC0063702E /* Temperature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperature.swift; sourceTree = "<group>"; };
+		3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeyHelper.swift; sourceTree = "<group>"; };
+		3639B37825EFDF3600ED6168 /* UIImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageHelper.swift; sourceTree = "<group>"; };
 		366B756225EAE02B00D26B92 /* UIColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorHelper.swift; sourceTree = "<group>"; };
 		369C85C625D3EE78005C3B11 /* Unit converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unit converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		369C85C925D3EE78005C3B11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -299,6 +303,8 @@
 				369F871925E99AE7004067C4 /* UIViewControllerHelper.swift */,
 				369F871E25E9A34C004067C4 /* UITextFieldHelper.swift */,
 				366B756225EAE02B00D26B92 /* UIColorHelper.swift */,
+				3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */,
+				3639B37825EFDF3600ED6168 /* UIImageHelper.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -562,10 +568,12 @@
 				36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */,
 				3611602325E2F9DC0063702E /* Temperature.swift in Sources */,
 				36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */,
+				3639B36F25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift in Sources */,
 				36CFF78825DDBB3900BE0233 /* ConversionViewCell.swift in Sources */,
 				36C6086825E4BAFA0001B9DF /* DoubleHelper.swift in Sources */,
 				36BE99FF25D7E107009A4777 /* TemperatureViewController.swift in Sources */,
 				369F871F25E9A34C004067C4 /* UITextFieldHelper.swift in Sources */,
+				3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */,
 				36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */,
 				36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */,
 				36DAFAE625E4376F00A40722 /* LiquidVolume.swift in Sources */,

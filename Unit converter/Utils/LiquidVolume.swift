@@ -32,7 +32,7 @@ struct LiquidVolume {
             if to == .millilitre {
                 output = value * 1000
             } else if to == .ukGallon {
-                output = value / 3.785
+                output = value / 4.546
             } else if to == .ukPint {
                 output = value * 1.76
             } else if to == .ukFluidOunce {
@@ -42,9 +42,9 @@ struct LiquidVolume {
             if to == .litre {
                 output = value / 1000
             } else if to == .ukGallon {
-                output = value / 3785.412
+                output = value / 4546
             } else if to == .ukPint {
-                output = value / 568.261
+                output = value / 568
             } else if to == .ukFluidOunce {
                 output = value / 28.413
             }
@@ -52,7 +52,7 @@ struct LiquidVolume {
             if to == .litre {
                 output = value * 4.546
             } else if to == .millilitre {
-                output = value * 4546.09
+                output = value * 4546
             } else if to == .ukPint {
                 output = value * 8
             } else if to == .ukFluidOunce {
@@ -62,7 +62,7 @@ struct LiquidVolume {
             if to == .litre {
                 output = value / 1.76
             } else if to == .millilitre {
-                output = value * 568.261
+                output = value * 568
             } else if to == .ukGallon {
                 output = value / 8
             } else if to == .ukFluidOunce {

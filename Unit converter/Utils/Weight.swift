@@ -34,9 +34,9 @@ struct Weight {
             } else if to == .ounce {
                 output = value * 35.274
             } else if to == .pound {
-                output = value * 2.20462
+                output = value * 2.205
             } else if to == .stone {
-                output = value / 6.35029318
+                output = value / 6.35
             }
         case .gram:
             if to == .kilogram {
@@ -44,9 +44,9 @@ struct Weight {
             } else if to == .ounce {
                 output = value / 28.35
             } else if to == .pound {
-                output = value / 453.592
+                output = value / 454
             } else if to == .stone {
-                output = value / 6350.293
+                output = value / 6350
             }
         case .ounce:
             if to == .kilogram {
@@ -62,7 +62,7 @@ struct Weight {
             if to == .kilogram {
                 output = value / 2.205
             } else if to == .gram {
-                output = value * 453.592
+                output = value * 454
             } else if to == .ounce {
                 output = value * 16
             } else if to == .stone {
@@ -72,7 +72,7 @@ struct Weight {
             if to == .kilogram {
                 output = value * 6.35
             } else if to == .gram {
-                output = value * 6350.293
+                output = value * 6350
             } else if to == .pound {
                 output = value *  14
             } else if to == .ounce {
@@ -82,4 +82,5 @@ struct Weight {
         
         return output
     }
+    
 }
