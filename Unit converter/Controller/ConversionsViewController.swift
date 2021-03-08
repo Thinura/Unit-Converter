@@ -20,34 +20,34 @@ class ConversionsViewController: UIViewController {
     let conversionDetails:(weightConversion:Conversion, temperatureConversion:Conversion, volumeConversion:Conversion, liquidVolumeConversion:Conversion, lengthConversion:Conversion, speedConversion:Conversion) = (
         
         /// Details about WEIGHT cell
-        Conversion(name: "Weight",
-                   icon: UIImage(named:"icon_weight")!,
-                   segueIdentifier: "weightSegue"),
+        Conversion(name: Cell.Weight.name,
+                   icon: Cell.Weight.icon!,
+                   segueIdentifier: Cell.Weight.segueIdentifier),
         
         /// Details about TEMPERATURE cell
-        Conversion(name: "Temperature",
-                   icon: UIImage(named:"icon_temperature")!,
-                   segueIdentifier: "temperatureSegue"),
+        Conversion(name: Cell.Temperature.name,
+                   icon: Cell.Temperature.icon!,
+                   segueIdentifier: Cell.Temperature.segueIdentifier),
         
         /// Details about VOLUME cell
-        Conversion(name: "Volume",
-                   icon: UIImage(named:"icon_volume")!,
-                   segueIdentifier: "volumeSegue"),
+        Conversion(name: Cell.Volume.name,
+                   icon: Cell.Volume.icon!,
+                   segueIdentifier: Cell.Volume.segueIdentifier),
         
         /// Details about LIQUID VOLUME cell
-        Conversion(name: "Liquid Volume",
-                   icon: UIImage(named:"icon_liquidVolume")!,
-                   segueIdentifier: "liquidVolumeSegue"),
+        Conversion(name: Cell.LiquidVolume.name,
+                   icon: Cell.LiquidVolume.icon!,
+                   segueIdentifier: Cell.LiquidVolume.segueIdentifier),
         
         /// Details about LENGTH cell
-        Conversion(name: "Length",
-                   icon: UIImage(named:"icon_length")!,
-                   segueIdentifier: "lengthSegue"),
+        Conversion(name: Cell.Length.name,
+                   icon: Cell.Length.icon!,
+                   segueIdentifier: Cell.Length.segueIdentifier),
         
         /// Details about SPEED cell
-        Conversion(name: "Speed",
-                   icon: UIImage(named:"icon_speed")!,
-                   segueIdentifier: "speedSegue")
+        Conversion(name: Cell.Speed.name,
+                   icon: Cell.Speed.icon!,
+                   segueIdentifier: Cell.Speed.segueIdentifier)
     )
     
     override func viewDidLoad() {
@@ -97,10 +97,11 @@ class ConversionsViewController: UIViewController {
     
 }
 
-/// Extension for ConversionsViewController to override the UICollectionViewDataSource and UICollectionViewDelegate
-/// To initialise  the number of cells
-/// To initialise the cell image
-/// To initialise the button click method
+/** Extension for ConversionsViewController to override the UICollectionViewDataSource and UICollectionViewDelegate
+    To initialise  the number of cells
+    To initialise the cell image
+    To initialise the button click method
+    */
 
 extension ConversionsViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     

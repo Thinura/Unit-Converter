@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 /// TemperatureMeasurementUnit enumeration is used to define the units
-enum TemperatureMeasurementUnit {
+enum TemperatureMeasurementUnit:MeasurementUnit {
     case celsius, fahrenheit, kelvin
     
     static let getAvailableTemperatureUnits = [celsius, fahrenheit, kelvin]
@@ -48,5 +49,9 @@ struct Temperature {
             }
         }
         return output
+    }
+    
+    static func temperatureConversion(inputFields:[UITextField]) -> String {
+        return "\(inputFields[0].text ?? "0") °C = \(inputFields[1].text ?? "0") °F = \(inputFields[2].text ?? "0") K"
     }
 }

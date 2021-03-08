@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 /// SpeedMeasurementUnit enumeration is used to define the units
-enum SpeedMeasurementUnit {
+enum SpeedMeasurementUnit: MeasurementUnit {
     case metresSecond, kilometreHour, milesHour, knot
     
     static let getAvailableSpeedUnits = [metresSecond, kilometreHour, milesHour, knot]
@@ -61,5 +62,9 @@ struct Speed {
             }
         }
         return output
+    }
+    
+    static func speedConversion(inputFields:[UITextField]) -> String {
+        return  "\(inputFields[0].text ?? "0") ms/s = \(inputFields[1].text ?? "0") km/h = \(inputFields[2].text ?? "0") mi/h = \(inputFields[3].text ?? "0") knots"
     }
 }

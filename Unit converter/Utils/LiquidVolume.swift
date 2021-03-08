@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 /// liquidVolumeMeasurementUnit enumeration is used to define the units
-enum LiquidVolumeMeasurementUnit {
+enum LiquidVolumeMeasurementUnit:MeasurementUnit {
     case litre, millilitre, ukGallon, ukPint, ukFluidOunce
     
     static let getAvailableLiquidVolumeUnits = [litre, millilitre, ukGallon, ukPint, ukFluidOunce]
@@ -81,6 +82,10 @@ struct LiquidVolume {
         }
         
         return output
+    }
+    
+    static func liquidVolumeConversion(inputFields:[UITextField]) -> String {
+        return "\(inputFields[0].text ?? "0") ℓ = \(inputFields[1].text ?? "0") mℓ = \(inputFields[2].text ?? "0") gal = \(inputFields[3].text ?? "0") pints = \(inputFields[4].text ?? "0") fl oz"
     }
 }
 

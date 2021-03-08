@@ -6,15 +6,17 @@
 //
 
 import Foundation
+import UIKit
 
 /// WeightMeasurementUnit enumeration is used to define the units
-enum WeightMeasurementUnit {
+enum WeightMeasurementUnit: MeasurementUnit {
     case kilogram, gram, ounce, pound, stone
     
     static let getAvailableWeightUnits = [kilogram, gram, ounce, pound, stone]
 }
 
 struct Weight {
+    
     let value: Double
     let unit: WeightMeasurementUnit
     
@@ -81,6 +83,10 @@ struct Weight {
         }
         
         return output
+    }
+    
+    static func weightConversion(inputFields:[UITextField]) -> String {
+        return "\(inputFields[1].text ?? "0") g = \(inputFields[0].text ?? "0") kg = \(inputFields[2].text ?? "0") oz = \(inputFields[3].text ?? "0") lb = \(inputFields[4].text ?? "0") stones & \(inputFields[5].text ?? "0") pounds"
     }
     
 }

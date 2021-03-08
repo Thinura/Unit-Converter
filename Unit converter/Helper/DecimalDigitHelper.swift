@@ -10,4 +10,5 @@ import Foundation
 struct DecimalSelector {
     static let numberOfDecimals = ["2","3","4"]
     static let defaultDecimal = "4"
+    static let defaultDecimalDigit = 4
 }

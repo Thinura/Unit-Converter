@@ -7,14 +7,11 @@
 
 import UIKit
 
-class LengthViewController: UIViewController, CustomKeyboardDelegate {
+class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionHelper, CustomKeyboardHelper {
     
     /// Defaults
     var activeInputTextField = UITextField()
-    var lengthMainStackTopConstraintDefaultHeight: CGFloat = 17.0
-    var inputTextFieldKeyBoardGap = 20
-    var keyBoardDefaultHeight:CGFloat = 0
-    var decimalDigit = 4
+    var decimalDigit = DecimalSelector.defaultDecimalDigit
     
     /// Used for keyboard handling - When user pressed auto scroll will be enable
     @IBOutlet weak var lengthMainStackTopConstraint: NSLayoutConstraint!
@@ -62,13 +59,9 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
     func settingUpCustomKeyboard() {
         
         // Setting up the custom keyboard with the text input fields
-        millimetreInputTextField.initializeCustomKeyboard(delegate: self)
-        centimetreInputTextField.initializeCustomKeyboard(delegate: self)
-        inchInputTextField.initializeCustomKeyboard(delegate: self)
-        metreInputTextField.initializeCustomKeyboard(delegate: self)
-        kilometreInputTextField.initializeCustomKeyboard(delegate: self)
-        mileInputTextField.initializeCustomKeyboard(delegate: self)
-        yardInputTextField.initializeCustomKeyboard(delegate: self)
+        for item in lengthInputTextFields {
+            item.initializeCustomKeyboard(delegate: self)
+        }
         
         //Listening to keyboard show events
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -78,9 +71,7 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         /// Reading from user defaults
-        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
-        // Default value will be set to 4 decimal points
-        let decimal = ((userDefaultDecimalDigit ?? DecimalSelector.defaultDecimal as NSString) as NSString).integerValue
+        let decimal = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
             // Inililzing user default decimal digit
@@ -90,7 +81,7 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
             
         }else{
             // Load last saved data
-            loadLastConversion()
+            loadLastConversion(inputFields: lengthInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY)
             
             // Inililzing user default decimal digit
             self.decimalDigit = decimal
@@ -99,49 +90,25 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
+    /**
+     This function which input field is pressed and updating the other input fields
+     - Parameter sender:UITextField
+     */
     func checkWhichTextFieldPressed(sender:UITextField){
         var lengthUnit: LengthMeasurementUnit?
         
-        if sender.tag == 1 {
-            lengthUnit = LengthMeasurementUnit.millimetre
-        } else if sender.tag == 2 {
-            lengthUnit = LengthMeasurementUnit.centimetre
-        } else if sender.tag == 3 {
-            lengthUnit = LengthMeasurementUnit.inch
-        }else if sender.tag == 4 {
-            lengthUnit = LengthMeasurementUnit.metre
-        } else if sender.tag == 5 {
-            lengthUnit = LengthMeasurementUnit.kilometre
-        } else if sender.tag == 6 {
-            lengthUnit = LengthMeasurementUnit.mile
-        }else if sender.tag == 7 {
-            lengthUnit = LengthMeasurementUnit.yard
+        for index in 1...LengthMeasurementUnit.getAvailableLengthUnits.count {
+            /// Checking whether which input field is pressed
+            if(sender.tag == index){
+                lengthUnit = LengthMeasurementUnit.getAvailableLengthUnits[index-1]
+                
+            }
+            
         }
         
         if lengthUnit != nil {
-            updateInputTextFields(textField: sender, lengthUnit: lengthUnit!)
+            updateInputTextFields(textField: sender, unit: lengthUnit!)
         }
-    }
-    
-    
-    // Load last conversion from user defaults
-    func loadLastConversion(){
-        /// Read from user defaults
-        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY) as? [String]
-        
-        if lastSavedConversion?.count ?? 0 > 0 {
-            
-            // Setting the conversion to the input text fields
-            millimetreInputTextField.text = lastSavedConversion![0]
-            centimetreInputTextField.text = lastSavedConversion![1]
-            inchInputTextField.text = lastSavedConversion![2]
-            metreInputTextField.text = lastSavedConversion![3]
-            kilometreInputTextField.text = lastSavedConversion![4]
-            yardInputTextField.text = lastSavedConversion![5]
-            mileInputTextField.text = lastSavedConversion![6]
-            
-        }
-        
     }
     
     /**
@@ -149,14 +116,7 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
      
      */
     @objc func keyWillHide(){
-        // Remove listening the first responder
-        view.endEditing(true)
-        
-        UIView.animate(withDuration: 0.50, animations: {
-            // Putting the view back to previous state
-            self.lengthMainStackTopConstraint.constant = self.lengthMainStackTopConstraintDefaultHeight
-            self.view.layoutIfNeeded()
-        })
+        hideCustomKeyboard(mainStackTopConstraint: self.lengthMainStackTopConstraint,view: self.view)
     }
     
     
@@ -173,83 +133,15 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
         if responder != nil{
             activeInputTextField = responder as! UITextField
             
-            let activeInputTextFieldSuperView = activeInputTextField.superview!
-            
-            
-            if let info = notification.userInfo{
-                let keyboard:CGRect = info["UIKeyboardFrameEndUserInfoKey"] as! CGRect
-                
-                let targetY = view.frame.size.height - keyboard.height - 15 - activeInputTextField.frame.size.height
-                
-                let initialY = lengthScreenMainStackView.frame.origin.y + activeInputTextFieldSuperView.frame.origin.y + activeInputTextField.frame.origin.y
-                
-                
-                if initialY > targetY {
-                    let diff = targetY - initialY
-                    let targetOffsetForTopConstraint = lengthMainStackTopConstraint.constant + diff
-                    self.view.layoutIfNeeded()
-                    
-                    UIView.animate(withDuration: 0.25, animations: {
-                        self.lengthMainStackTopConstraint.constant = targetOffsetForTopConstraint
-                        self.view.layoutIfNeeded()
-                    })
-                }
-                
-                var contentInset:UIEdgeInsets = self.lengthScreenScrollView.contentInset
-                contentInset.bottom = keyboard.size.height
-                lengthScreenScrollView.contentInset = contentInset
-            }
+            showCustomKeyboard(activeInputTextField: activeInputTextField, notification: notification, screenMainStackView: self.lengthScreenMainStackView, screenScrollView: self.lengthScreenScrollView, mainStackTopConstraint: self.lengthMainStackTopConstraint, view: self.view)
         }
-    }
-    
-    /**
-     This function finds the first responder in a UIView
-     - Parameter inView: The corresponding UIView.
-     - Returns: A UIView or a subview will be returned.
-     */
-    func findResponder(inView view: UIView) -> UIView? {
-        for subView in view.subviews{
-            if subView.isFirstResponder{
-                return subView
-            }
-            if let recursiveSubView = self.findResponder(inView: subView){
-                return recursiveSubView
-            }
-        }
-        return nil
     }
     
     /// listening which input was typed
     @IBAction func handleInputTextField(_ sender: UITextField) {
         
         checkWhichTextFieldPressed(sender: sender)
-        checkAvailabilityRightBarButtons()
-    }
-    
-    /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButtons() {
-        // Getting access on last two right navigation bar buttons
-        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
-        for button in rightBarButtons {
-            if isInputTextFieldEmpty() {
-                button.isEnabled = false
-            }else{
-                button.isEnabled = true
-            }
-        }
-    }
-    
-    /**
-     Method returns a boolean after checking whether input fields are empty or not
-     
-     - Returns: Boolean
-     
-     */
-    func isInputTextFieldEmpty() -> Bool {
-        if !(millimetreInputTextField.text?.isEmpty)! && !(centimetreInputTextField.text?.isEmpty)! && !(metreInputTextField.text?.isEmpty)! && !(inchInputTextField.text?.isEmpty)! && !(kilometreInputTextField.text?.isEmpty)! && !(mileInputTextField.text?.isEmpty)!  && !(yardInputTextField.text?.isEmpty)!{
-            return false
-        }
-        return true
+        checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: lengthInputTextFields)
     }
     
     /**
@@ -258,22 +150,22 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
      -  Parameters: textField, lengthUnit of the changed method
      
      */
-    func updateInputTextFields(textField: UITextField, lengthUnit: LengthMeasurementUnit) -> Void{
+    func updateInputTextFields<T: MeasurementUnit>(textField: UITextField, unit: T) -> Void{
         if let input = textField.text{
             if input.isEmpty{
                 
                 ///Clear the input text fields when its empty
                 clearTextFields(inputTextFields: lengthInputTextFields)
-                
+                checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: lengthInputTextFields)
             }else{
                 if let value = Double(input as String){
-                    let length = Length(unit: lengthUnit, value: value)
+                    let length = Length(unit: unit as! LengthMeasurementUnit, value: value)
                     
                     for _unit in LengthMeasurementUnit.getAvailableLengthUnits{
-                        if _unit == lengthUnit{
+                        if _unit == unit as! LengthMeasurementUnit{
                             continue
                         }
-                        let textField = mapUnitToTextField(lengthUnit: _unit)
+                        let textField = mapUnitToTextField(unit: _unit)
                         let result = length.convert(unit: _unit)
                         
                         /// Rounding off to 4 decimal places by default
@@ -291,51 +183,44 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
      - Parameters: lengthUnit of the length that user input
      - Returns: Respective UITextField
      */
-    func mapUnitToTextField(lengthUnit: LengthMeasurementUnit) -> UITextField {
-        var textField = millimetreInputTextField
-        switch lengthUnit {
-        case .millimetre:
-            textField = millimetreInputTextField
-        case .centimetre:
-            textField = centimetreInputTextField
-        case .inch:
-            textField = inchInputTextField
-        case .metre:
-            textField = metreInputTextField
-        case .mile:
-            textField = mileInputTextField
-        case .kilometre:
-            textField = kilometreInputTextField
-        case .yard:
-            textField = yardInputTextField
+    func mapUnitToTextField<T: MeasurementUnit>(unit: T) -> UITextField {
+        var textField = UITextField()
+        
+        for index in 1...LengthMeasurementUnit.getAvailableLengthUnits.count {
+            let item = LengthMeasurementUnit.getAvailableLengthUnits[index-1]
+            if unit as! LengthMeasurementUnit == item {
+                textField = lengthInputTextFields[index-1]
+                return textField
+            }
+            
         }
-        return textField!
+        return textField
     }
     
     /**
      This function handle the save buttons' functionality which only can be save 5 conversions
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(){
-            let lastAddData = [millimetreInputTextField.text!, centimetreInputTextField.text!,inchInputTextField.text!,metreInputTextField.text!, kilometreInputTextField.text!,yardInputTextField.text!, mileInputTextField.text!] as [String]
+        if !isInputTextFieldEmpty(inputFields: lengthInputTextFields){
+            let lastAddData = lastAddedData(inputFields: lengthInputTextFields) as [String]
             
-            let conversion = "\(millimetreInputTextField.text!) mm = \(centimetreInputTextField.text!) cm = \(inchInputTextField.text!) inches = \(metreInputTextField.text!) m = \(mileInputTextField.text!) miles = \(yardInputTextField.text!) yards"
+            let conversion = Length.lengthConversion(inputFields: lengthInputTextFields)
             
             /// Getting initial history data
             var lengthHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
             if (!checkConversionIsAlreadySaved(historyList: lengthHistory, conversion: conversion)){
                 /// Check whether there are maximum amount of temperature conversions if so first value will be removed
-                if lengthHistory.count >= UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                    lengthHistory = Array(lengthHistory.suffix(UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
-                }
-                lengthHistory.append(conversion)
+                lengthHistory = checkMaximumConversion(conversion: conversion, conversionKey: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY, conversionsMaxCount: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT) as [String]
                 
                 /// Add last added conversion
-                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY)
+                saveInUserDefaults(data: lastAddData, key: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY)
                 
                 /// Saving data in user defaults
-                UserDefaults.standard.set(lengthHistory, forKey: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
+                saveInUserDefaults(data: lengthHistory, key: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                // Disabling the save button
+                self.navigationItem.rightBarButtonItem!.isEnabled = false;
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
                 showAlert(title: Alert.Success.title, message: Alert.Success.Length.message)
@@ -352,28 +237,13 @@ class LengthViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
-    /// This function clears all the text fields
-    func clearTextFields(inputTextFields:[UITextField]) {
-        for textInputField in inputTextFields{
-            textInputField.text = ""
-        }
-        checkAvailabilityRightBarButtons()
-    }
-    
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(){
+        if !isInputTextFieldEmpty(inputFields: lengthInputTextFields){
             ///Clear the input text fields when its empty
             clearTextFields(inputTextFields: lengthInputTextFields)
+            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: lengthInputTextFields)
+
         }
-    }
-    
-    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
-        for historyListConversion in historyList {
-            if (historyListConversion == conversion){
-                return true
-            }
-        }
-        return false
     }
     
     /**

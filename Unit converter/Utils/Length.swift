@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 /// LengthMeasurementUnit enumeration is used to define the units
-enum LengthMeasurementUnit {
+enum LengthMeasurementUnit: MeasurementUnit {
     case millimetre, centimetre, inch, metre, mile, kilometre, yard
     
     static let getAvailableLengthUnits = [millimetre, centimetre, inch, metre, mile, kilometre, yard]
@@ -128,5 +129,11 @@ struct Length {
         }
         return output
     }
+    
+    
+    static func lengthConversion(inputFields:[UITextField]) -> String {
+        return "\(inputFields[0].text ?? "0") mm = \(inputFields[1].text ?? "0") cm = \(inputFields[2].text ?? "0") inches = \(inputFields[3].text ?? "0") m = \(inputFields[4].text ?? "0") km = \(inputFields[5].text ?? "0") miles = \(inputFields[6].text ?? "0") yards"
+    }
+    
 }
 

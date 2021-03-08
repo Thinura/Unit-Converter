@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		29A55519137FFE8212F97C43 /* Pods_Unit_converter_Unit_converterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD23B151597E99308F2CAD4 /* Pods_Unit_converter_Unit_converterUITests.framework */; };
 		3611602325E2F9DC0063702E /* Temperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3611602225E2F9DC0063702E /* Temperature.swift */; };
+		3618179825F64B5F0007BC47 /* ConversionCellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3618179725F64B5F0007BC47 /* ConversionCellHelper.swift */; };
+		3629941225F57C50001B5C1F /* CustomKeyboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3629941125F57C50001B5C1F /* CustomKeyboardHelper.swift */; };
 		3639B36F25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */; };
 		3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B37825EFDF3600ED6168 /* UIImageHelper.swift */; };
 		3639B3A325F064F800ED6168 /* AlertMessageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */; };
@@ -24,6 +26,7 @@
 		369C85EF25D3EE7C005C3B11 /* Unit_converterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C85EE25D3EE7C005C3B11 /* Unit_converterUITests.swift */; };
 		369F871A25E99AE7004067C4 /* UIViewControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369F871925E99AE7004067C4 /* UIViewControllerHelper.swift */; };
 		369F871F25E9A34C004067C4 /* UITextFieldHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369F871E25E9A34C004067C4 /* UITextFieldHelper.swift */; };
+		36A48F4425F575ED00B035A1 /* CustomKeyboardDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A48F4325F575ED00B035A1 /* CustomKeyboardDefaultsHelper.swift */; };
 		36B33C2325D9AD0800D78591 /* ConversionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B33C2225D9AD0800D78591 /* ConversionsViewController.swift */; };
 		36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99E525D7E087009A4777 /* TabBarViewController.swift */; };
 		36BE99EB25D7E0AE009A4777 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */; };
@@ -47,6 +50,7 @@
 		36E6874325E19CD90087E2C8 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6874225E19CD90087E2C8 /* History.swift */; };
 		36E6874B25E1A4BF0087E2C8 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6874A25E1A4BF0087E2C8 /* HistoryTableViewCell.swift */; };
 		36E6875F25E1BD790087E2C8 /* UITableViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E6875E25E1BD790087E2C8 /* UITableViewHelper.swift */; };
+		36FBCA1325F3FB0700A6EBA7 /* ConversionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FBCA1225F3FB0700A6EBA7 /* ConversionsHelper.swift */; };
 		872CDA41E2A68C9691C1B88A /* Pods_Unit_converterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24B805656336EB36C6B05B1 /* Pods_Unit_converterTests.framework */; };
 		C8C46CABF54AD77AEA3D2F24 /* Pods_Unit_converter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EACE4182871D22D8BA648B19 /* Pods_Unit_converter.framework */; };
 /* End PBXBuildFile section */
@@ -70,6 +74,8 @@
 
 /* Begin PBXFileReference section */
 		3611602225E2F9DC0063702E /* Temperature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperature.swift; sourceTree = "<group>"; };
+		3618179725F64B5F0007BC47 /* ConversionCellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionCellHelper.swift; sourceTree = "<group>"; };
+		3629941125F57C50001B5C1F /* CustomKeyboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboardHelper.swift; sourceTree = "<group>"; };
 		3639B36E25EF5D7800ED6168 /* UserDefaultsKeyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeyHelper.swift; sourceTree = "<group>"; };
 		3639B37825EFDF3600ED6168 /* UIImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageHelper.swift; sourceTree = "<group>"; };
 		3639B3A225F064F800ED6168 /* AlertMessageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertMessageHelper.swift; sourceTree = "<group>"; };
@@ -91,6 +97,7 @@
 		369C85F025D3EE7C005C3B11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		369F871925E99AE7004067C4 /* UIViewControllerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerHelper.swift; sourceTree = "<group>"; };
 		369F871E25E9A34C004067C4 /* UITextFieldHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextFieldHelper.swift; sourceTree = "<group>"; };
+		36A48F4325F575ED00B035A1 /* CustomKeyboardDefaultsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboardDefaultsHelper.swift; sourceTree = "<group>"; };
 		36B33C2225D9AD0800D78591 /* ConversionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionsViewController.swift; sourceTree = "<group>"; };
 		36BE99E525D7E087009A4777 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
@@ -114,6 +121,7 @@
 		36E6874225E19CD90087E2C8 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		36E6874A25E1A4BF0087E2C8 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		36E6875E25E1BD790087E2C8 /* UITableViewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewHelper.swift; sourceTree = "<group>"; };
+		36FBCA1225F3FB0700A6EBA7 /* ConversionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionsHelper.swift; sourceTree = "<group>"; };
 		3985E93E4EB53EDB2D4A5460 /* Pods-Unit converter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unit converter.debug.xcconfig"; path = "Target Support Files/Pods-Unit converter/Pods-Unit converter.debug.xcconfig"; sourceTree = "<group>"; };
 		39DBE5B80ABAD32787A4A8E6 /* Pods-Unit converterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unit converterTests.debug.xcconfig"; path = "Target Support Files/Pods-Unit converterTests/Pods-Unit converterTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5B948C7E9F9CD7DEBED36C6D /* Pods-Unit converter-Unit converterUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unit converter-Unit converterUITests.release.xcconfig"; path = "Target Support Files/Pods-Unit converter-Unit converterUITests/Pods-Unit converter-Unit converterUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -164,6 +172,24 @@
 				B55628B52B1F6770D80E95E6 /* Pods-Unit converterTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		3618179C25F64B880007BC47 /* ConversionHelper */ = {
+			isa = PBXGroup;
+			children = (
+				36FBCA1225F3FB0700A6EBA7 /* ConversionsHelper.swift */,
+				3618179725F64B5F0007BC47 /* ConversionCellHelper.swift */,
+			);
+			path = ConversionHelper;
+			sourceTree = "<group>";
+		};
+		3629941025F57C2E001B5C1F /* CustomKeyboardHelper */ = {
+			isa = PBXGroup;
+			children = (
+				36A48F4325F575ED00B035A1 /* CustomKeyboardDefaultsHelper.swift */,
+				3629941125F57C50001B5C1F /* CustomKeyboardHelper.swift */,
+			);
+			path = CustomKeyboardHelper;
 			sourceTree = "<group>";
 		};
 		369C85BD25D3EE78005C3B11 = {
@@ -245,15 +271,15 @@
 		369C860125D3F03D005C3B11 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				36BE99E525D7E087009A4777 /* TabBarViewController.swift */,
-				36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */,
-				36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */,
 				36BE99F925D7E0FB009A4777 /* WeightViewController.swift */,
 				36BE99FE25D7E107009A4777 /* TemperatureViewController.swift */,
 				36BE9A0325D7E123009A4777 /* LengthViewController.swift */,
 				36BE9A0825D7E12A009A4777 /* SpeedViewController.swift */,
 				36BE9A0D25D7E319009A4777 /* VolumeViewController.swift */,
 				36BE9A1225D7E339009A4777 /* LiquidVolumeViewController.swift */,
+				36BE99E525D7E087009A4777 /* TabBarViewController.swift */,
+				36BE99EA25D7E0AE009A4777 /* HistoryViewController.swift */,
+				36BE99F425D7E0E7009A4777 /* SettingsViewController.swift */,
 				36B33C2225D9AD0800D78591 /* ConversionsViewController.swift */,
 			);
 			path = Controller;
@@ -302,6 +328,8 @@
 		36E6875225E1BD0D0087E2C8 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				3618179C25F64B880007BC47 /* ConversionHelper */,
+				3629941025F57C2E001B5C1F /* CustomKeyboardHelper */,
 				36E6875E25E1BD790087E2C8 /* UITableViewHelper.swift */,
 				36C6086725E4BAFA0001B9DF /* DoubleHelper.swift */,
 				369F871925E99AE7004067C4 /* UIViewControllerHelper.swift */,
@@ -569,8 +597,10 @@
 				36BE9A0425D7E123009A4777 /* LengthViewController.swift in Sources */,
 				36DAFAF025E4379900A40722 /* Speed.swift in Sources */,
 				36BE9A1325D7E339009A4777 /* LiquidVolumeViewController.swift in Sources */,
+				3629941225F57C50001B5C1F /* CustomKeyboardHelper.swift in Sources */,
 				369F871A25E99AE7004067C4 /* UIViewControllerHelper.swift in Sources */,
 				36E6873C25E15F2B0087E2C8 /* Weight.swift in Sources */,
+				3618179825F64B5F0007BC47 /* ConversionCellHelper.swift in Sources */,
 				36BE99E625D7E087009A4777 /* TabBarViewController.swift in Sources */,
 				3611602325E2F9DC0063702E /* Temperature.swift in Sources */,
 				36BE9A2325D86A04009A4777 /* CustomKeyboard.swift in Sources */,
@@ -579,11 +609,13 @@
 				36C6086825E4BAFA0001B9DF /* DoubleHelper.swift in Sources */,
 				36BE99FF25D7E107009A4777 /* TemperatureViewController.swift in Sources */,
 				369F871F25E9A34C004067C4 /* UITextFieldHelper.swift in Sources */,
+				36FBCA1325F3FB0700A6EBA7 /* ConversionsHelper.swift in Sources */,
 				3639B37925EFDF3600ED6168 /* UIImageHelper.swift in Sources */,
 				3639B3A325F064F800ED6168 /* AlertMessageHelper.swift in Sources */,
 				36BE99F525D7E0E7009A4777 /* SettingsViewController.swift in Sources */,
 				36CFF78025DDA50F00BE0233 /* Conversion.swift in Sources */,
 				36DAFAE625E4376F00A40722 /* LiquidVolume.swift in Sources */,
+				36A48F4425F575ED00B035A1 /* CustomKeyboardDefaultsHelper.swift in Sources */,
 				36E6874B25E1A4BF0087E2C8 /* HistoryTableViewCell.swift in Sources */,
 				369C85CA25D3EE78005C3B11 /* AppDelegate.swift in Sources */,
 				36BE99FA25D7E0FB009A4777 /* WeightViewController.swift in Sources */,

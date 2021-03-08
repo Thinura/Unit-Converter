@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
+class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, ConversionHelper, CustomKeyboardHelper {
     
     /// Defaults
     var activeInputTextField = UITextField()
@@ -41,7 +41,9 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Adding gesture recogniser listener
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
+        
     }
     
     
@@ -57,11 +59,9 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
     func settingUpCustomKeyboard() {
         
         // Setting up the custom keyboard with the text input fields
-        litreInputTextField.initializeCustomKeyboard(delegate: self)
-        millilitreInputTextField.initializeCustomKeyboard(delegate: self)
-        ukGallonInputTextField.initializeCustomKeyboard(delegate: self)
-        ukPintInputTextField.initializeCustomKeyboard(delegate: self)
-        ukFluidOunceInputTextField.initializeCustomKeyboard(delegate: self)
+        for item in liquidVolumeInputTextFields {
+            item.initializeCustomKeyboard(delegate: self)
+        }
         
         //Listening to keyboard show events
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -71,11 +71,8 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
     
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
-        /// Reading from user defaults
-        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
-        // Default value will be set to 4 decimal points
-        let decimal = ((userDefaultDecimalDigit ?? DecimalSelector.defaultDecimal as NSString) as NSString).integerValue
         
+        let decimal = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
             // Inililzing user default decimal digit
@@ -85,7 +82,7 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
             
         }else{
             // Load last saved data
-            loadLastConversion()
+            loadLastConversion(inputFields: liquidVolumeInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
             
             // Inililzing user default decimal digit
             self.decimalDigit = decimal
@@ -97,40 +94,34 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
     func checkWhichTextFieldPressed(sender:UITextField){
         var liquidVolumeUnit: LiquidVolumeMeasurementUnit?
         
-        /// Checking whether which input field is pressed
-        if sender.tag == 1 {
-            liquidVolumeUnit = LiquidVolumeMeasurementUnit.litre
-        } else if sender.tag == 2 {
-            liquidVolumeUnit = LiquidVolumeMeasurementUnit.millilitre
-        } else if sender.tag == 3 {
-            liquidVolumeUnit = LiquidVolumeMeasurementUnit.ukGallon
-        } else if sender.tag == 4 {
-            liquidVolumeUnit = LiquidVolumeMeasurementUnit.ukPint
-        } else if sender.tag == 5 {
-            liquidVolumeUnit = LiquidVolumeMeasurementUnit.ukFluidOunce
+        for index in 1...LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits.count {
+            /// Checking whether which input field is pressed
+            if(sender.tag == index){
+                liquidVolumeUnit = LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits[index-1]
+            }
         }
         
         if liquidVolumeUnit != nil {
-            updateInputTextFields(textField: sender, liquidVolumeUnit: liquidVolumeUnit!)
+            updateInputTextFields(textField: sender, unit: liquidVolumeUnit!)
         }
     }
     
-    // Load last conversion from user defaults
-    func loadLastConversion(){
-        /// Read from user defaults
-        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY) as? [String]
-        
-        if lastSavedConversion?.count ?? 0 > 0 {
-            
-            // Setting the conversion to the input text fields
-            litreInputTextField.text = lastSavedConversion![0]
-            millilitreInputTextField.text = lastSavedConversion![1]
-            ukGallonInputTextField.text = lastSavedConversion![2]
-            ukPintInputTextField.text = lastSavedConversion![3]
-            ukFluidOunceInputTextField.text = lastSavedConversion![4]
-        }
-        
-    }
+//    // Load last conversion from user defaults
+//    func loadLastConversion(){
+//        /// Read from user defaults
+//        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY) as? [String]
+//
+//        if lastSavedConversion?.count ?? 0 > 0 {
+//
+//            // Setting the conversion to the input text fields
+//            litreInputTextField.text = lastSavedConversion![0]
+//            millilitreInputTextField.text = lastSavedConversion![1]
+//            ukGallonInputTextField.text = lastSavedConversion![2]
+//            ukPintInputTextField.text = lastSavedConversion![3]
+//            ukFluidOunceInputTextField.text = lastSavedConversion![4]
+//        }
+//
+//    }
     
     /**
      This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
@@ -190,79 +181,11 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
-    /**
-     This function finds the first responder in a UIView
-     - Parameter inView: The corresponding UIView.
-     - Returns: A UIView or a subview will be returned.
-     */
-    func findResponder(inView view: UIView) -> UIView? {
-        for subView in view.subviews{
-            if subView.isFirstResponder{
-                return subView
-            }
-            if let recursiveSubView = self.findResponder(inView: subView){
-                return recursiveSubView
-            }
-        }
-        return nil
-    }
-    
-    
-    /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButtons() {
-        // Getting access on last two right navigation bar buttons
-        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
-        for button in rightBarButtons {
-            if isInputTextFieldEmpty() {
-                button.isEnabled = false
-            }else{
-                button.isEnabled = true
-            }
-        }
-    }
-    
     @IBAction func handleInputTextField(_ sender: UITextField) {
         
         checkWhichTextFieldPressed(sender: sender)
-        checkAvailabilityRightBarButtons()
+        checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: liquidVolumeInputTextFields)
     }
-    
-    /**
-     Method returns a boolean after checking whether input fields are empty or not
-     
-     - Returns: Boolean
-     
-     */
-    func isInputTextFieldEmpty() -> Bool {
-        if !(litreInputTextField.text?.isEmpty)! && !(millilitreInputTextField.text?.isEmpty)! && !(ukGallonInputTextField.text?.isEmpty)! && !(ukPintInputTextField.text?.isEmpty)! &&
-            !(ukFluidOunceInputTextField.text?.isEmpty)! {
-            return false
-        }
-        return true
-    }
-    
-    /**
-     This function maps value to liquid volume unit respectively
-     - Parameters: liquidVolumeUnit of the liquid volume that user input
-     - Returns: Respective UITextField
-     */
-    func mapUnitToTextField(liquidVolumeUnit: LiquidVolumeMeasurementUnit) -> UITextField {
-        var textField = millilitreInputTextField
-        switch liquidVolumeUnit {
-        case .millilitre:
-            textField = millilitreInputTextField
-        case .litre:
-            textField = litreInputTextField
-        case .ukGallon:
-            textField = ukGallonInputTextField
-        case .ukPint:
-            textField = ukPintInputTextField
-        case .ukFluidOunce:
-            textField = ukFluidOunceInputTextField
-        }
-        return textField!
-    }
-    
     
     /**
      Method will update the other liquid volume input fields
@@ -270,23 +193,25 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
      -  Parameters: textField, liquidVolumeUnit of the changed method
      
      */
-    func updateInputTextFields(textField: UITextField, liquidVolumeUnit: LiquidVolumeMeasurementUnit) -> Void{
+    func updateInputTextFields<T: MeasurementUnit>(textField: UITextField, unit: T) -> Void{
         if let input = textField.text {
             if input.isEmpty {
                 
                 ///Clear the input text fields when its empty
                 clearTextFields(inputTextFields: liquidVolumeInputTextFields)
+                checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: liquidVolumeInputTextFields)
+                
                 
             } else {
                 
                 if let value = Double(input as String) {
-                    let liquidVolume = LiquidVolume(unit: liquidVolumeUnit, value: value)
+                    let liquidVolume = LiquidVolume(unit: unit as! LiquidVolumeMeasurementUnit, value: value)
                     
                     for _unit in LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits {
-                        if _unit == liquidVolumeUnit {
+                        if _unit == unit as! LiquidVolumeMeasurementUnit {
                             continue
                         }
-                        let textField = mapUnitToTextField(liquidVolumeUnit: _unit)
+                        let textField = mapUnitToTextField(unit: _unit)
                         let result = liquidVolume.convert(unit: _unit)
                         
                         /// Rounding off to 4 decimal places by default
@@ -300,15 +225,32 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
     }
     
     /**
+     This function maps value to liquid volume unit respectively
+     - Parameters: liquidVolumeUnit of the liquid volume that user input
+     - Returns: Respective UITextField
+     */
+    func mapUnitToTextField<T: MeasurementUnit>(unit: T) -> UITextField {
+        var textField = UITextField()
+        let liquidVolumeUnit = LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits
+        for index in 1...liquidVolumeUnit.count {
+            let item = liquidVolumeUnit[index-1]
+            if unit as! LiquidVolumeMeasurementUnit == item {
+                textField = liquidVolumeInputTextFields[index-1]
+                return textField
+            }
+        }
+        return textField
+    }
+    
+    /**
      This function handle the save buttons' functionality which only can be save 5 conversions
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(){
+        if !isInputTextFieldEmpty(inputFields: liquidVolumeInputTextFields){
             
-            let lastAddData = [litreInputTextField.text!, millilitreInputTextField.text!,ukGallonInputTextField.text!,ukPintInputTextField.text!,ukFluidOunceInputTextField.text!] as [String]
+            let lastData = lastAddedData(inputFields: liquidVolumeInputTextFields) as [String]
             
-            
-            let conversion = "\(litreInputTextField.text!) ℓ = \(millilitreInputTextField.text!) mℓ = \(ukGallonInputTextField.text!) gal = \(ukPintInputTextField.text!) pints = \(ukFluidOunceInputTextField.text!) fl oz"
+            let conversion = LiquidVolume.liquidVolumeConversion(inputFields: liquidVolumeInputTextFields) as String
             
             /// Getting initial history data
             var liquidVolumeHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
@@ -316,16 +258,16 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
             if (!checkConversionIsAlreadySaved(historyList: liquidVolumeHistory, conversion: conversion)){
                 
                 /// Check whether there are maximum amount of liquid volume conversions if so first value will be removed
-                if liquidVolumeHistory.count >= UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                    liquidVolumeHistory = Array(liquidVolumeHistory.suffix(UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
-                }
-                liquidVolumeHistory.append(conversion)
+                liquidVolumeHistory = checkMaximumConversion(conversion: conversion, conversionKey: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY, conversionsMaxCount: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT)
                 
                 /// Add last added conversion
-                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
+                saveInUserDefaults(data: lastData, key: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
                 
                 /// Saving data in user defaults
-                UserDefaults.standard.set(liquidVolumeHistory, forKey: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                saveInUserDefaults(data: liquidVolumeHistory, key: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                // Disabling the save button
+                self.navigationItem.rightBarButtonItem!.isEnabled = false;
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
                 showAlert(title: Alert.Success.title, message:Alert.Success.LiquidVolume.message)
@@ -341,31 +283,13 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
-    /// This function clears all the text fields
-    func clearTextFields(inputTextFields:[UITextField]) {
-        for textInputField in inputTextFields{
-            textInputField.text = ""
-        }
-        checkAvailabilityRightBarButtons()
-    }
-    
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(){
+        if !isInputTextFieldEmpty(inputFields: liquidVolumeInputTextFields){
             ///Clear the input text fields when its empty
             clearTextFields(inputTextFields: liquidVolumeInputTextFields)
+            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: liquidVolumeInputTextFields)
         }
     }
-    
-    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
-        for historyListConversion in historyList {
-            if (historyListConversion == conversion){
-                return true
-            }
-        }
-        return false
-    }
-    
-    
     
     /**
      This function will only trigger when custom keyboard in use

@@ -7,16 +7,11 @@
 
 import UIKit
 
-
-
-class WeightViewController: UIViewController, CustomKeyboardDelegate {
+class WeightViewController: UIViewController, CustomKeyboardDelegate, ConversionHelper, CustomKeyboardHelper {
     
     /// Defaults
     var activeInputTextField = UITextField()
-    var weightMainStackTopConstraintDefaultHeight: CGFloat = 17.0
-    var inputTextFieldKeyBoardGap = 20
-    var keyBoardDefaultHeight:CGFloat = 0
-    var decimalDigit = 4
+    var decimalDigit = DecimalSelector.defaultDecimalDigit
     
     /// Used for keyboard handling - When user pressed auto scroll will be enable
     @IBOutlet weak var weightMainStackTopConstraint: NSLayoutConstraint!
@@ -41,49 +36,29 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Adding gesture recogniser listener
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(keyWillHide)))
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         settingUpCustomKeyboard()
         
         settingUpDecimal()
-    }
-    
-    // Load last conversion from user defaults
-    func loadLastConversion(){
-        /// Read from user defaults
-        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY) as? [String]
-        
-        if lastSavedConversion?.count ?? 0 > 0 {
-            
-            // Setting the conversion to the input text fields
-            kilogramInputTextField.text = lastSavedConversion![0]
-            gramInputTextField.text = lastSavedConversion![1]
-            ounceInputField.text = lastSavedConversion![2]
-            poundInputField.text = lastSavedConversion![3]
-            spStoneInputField.text = lastSavedConversion![4]
-            spPoundInputField.text = lastSavedConversion![5]
-            
-        }
-        
     }
     
     /// This function setting up the custom keyboard
     func settingUpCustomKeyboard() {
         
         // Setting up the custom keyboard with the text input fields
-        kilogramInputTextField.initializeCustomKeyboard(delegate: self)
-        gramInputTextField.initializeCustomKeyboard(delegate: self)
-        ounceInputField.initializeCustomKeyboard(delegate: self)
-        poundInputField.initializeCustomKeyboard(delegate: self)
-        spStoneInputField.initializeCustomKeyboard(delegate: self)
-        
-        spPoundInputField.initializeCustomKeyboard(delegate: self)
-        spPoundInputField.isUserInteractionEnabled = false // disable the interactivity pound is already on the input text
+        for item in weightInputTextFields {
+            if(item == weightInputTextFields[5]){
+                // disable the interactivity pound is already on the input text
+                item.isUserInteractionEnabled = false
+            }
+            item.initializeCustomKeyboard(delegate: self)
+        }
         
         //Listening to keyboard show events
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -92,10 +67,8 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
-        /// Reading from user defaults
-        let userDefaultDecimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? NSString
-        // Default value will be set to 4 decimal points
-        let decimal = ((userDefaultDecimalDigit ?? DecimalSelector.defaultDecimal as NSString) as NSString).integerValue
+        
+        let decimal = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
             // Inililzing user default decimal digit
@@ -104,8 +77,9 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
             checkWhichTextFieldPressed(sender: activeInputTextField)
             
         }else{
+            
             // Load last saved data
-            loadLastConversion()
+            loadLastConversion(inputFields: weightInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY)
             
             // Inililzing user default decimal digit
             self.decimalDigit = decimal
@@ -115,62 +89,49 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     }
     
     /**
+     This function which input field is pressed and updating the other input fields
+     
+     - Parameter sender:UITextField
+     
+     */
+    func checkWhichTextFieldPressed(sender:UITextField){
+        var weightUnit: WeightMeasurementUnit?
+        
+        for index in 1...WeightMeasurementUnit.getAvailableWeightUnits.count {
+            /// Checking whether which input field is pressed
+            if(sender.tag == index){
+                weightUnit = WeightMeasurementUnit.getAvailableWeightUnits[index-1]
+            }
+        }
+        
+        if weightUnit != nil {
+            updateInputTextFields(textField: sender, unit: weightUnit!)
+        }
+    }
+    
+    /**
      This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
      
      */
     @objc func keyWillHide(){
-        // Remove listening the first responder
-        view.endEditing(true)
+        hideCustomKeyboard(mainStackTopConstraint: self.weightMainStackTopConstraint,view: self.view)
         
-        UIView.animate(withDuration: 0.50, animations: {
-            // Putting the view back to previous state
-            self.weightMainStackTopConstraint.constant = self.weightMainStackTopConstraintDefaultHeight
-            self.view.layoutIfNeeded()
-        })
     }
-    
     
     /**
      This function will recognise the responder and adjust respectively ui text field.
      The scroll will adjust accordingly.
+     
      - Parameter NSNotification: notification object
      
      */
-    
     @objc func keyboardWillShow(notification: NSNotification) {
-        let responder = self.findResponder(inView: self.view)
+        let responder = findResponder(inView: self.view)
         
         if responder != nil{
             activeInputTextField = responder as! UITextField
             
-            var activeInputTextFieldSuperView = activeInputTextField.superview!
-            if activeInputTextField.tag == 5 || activeInputTextField.tag == 6{
-                activeInputTextFieldSuperView = activeInputTextField.superview!.superview!
-            }
-            
-            if let info = notification.userInfo{
-                let keyboard:CGRect = info["UIKeyboardFrameEndUserInfoKey"] as! CGRect
-                
-                let targetY = view.frame.size.height - keyboard.height - 15 - activeInputTextField.frame.size.height
-                
-                let initialY = weightScreenMainStackView.frame.origin.y + activeInputTextFieldSuperView.frame.origin.y + activeInputTextField.frame.origin.y
-                
-                
-                if initialY > targetY {
-                    let diff = targetY - initialY
-                    let targetOffsetForTopConstraint = weightMainStackTopConstraint.constant + diff
-                    self.view.layoutIfNeeded()
-                    
-                    UIView.animate(withDuration: 0.25, animations: {
-                        self.weightMainStackTopConstraint.constant = targetOffsetForTopConstraint
-                        self.view.layoutIfNeeded()
-                    })
-                }
-                
-                var contentInset:UIEdgeInsets = self.weightScreenScrollView.contentInset
-                contentInset.bottom = keyboard.size.height
-                weightScreenScrollView.contentInset = contentInset
-            }
+            showCustomKeyboard(activeInputTextField: activeInputTextField, notification: notification, screenMainStackView: self.weightScreenMainStackView, screenScrollView: self.weightScreenScrollView, mainStackTopConstraint: self.weightMainStackTopConstraint, view: self.view)
         }
     }
     
@@ -179,100 +140,33 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
     @IBAction func handleInputTextField(_ sender: UITextField) {
         
         checkWhichTextFieldPressed(sender: sender)
-        checkAvailabilityRightBarButtons()
-        
+        checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: weightInputTextFields)
     }
-    
-    
-    func checkWhichTextFieldPressed(sender:UITextField){
-        var weightUnit: WeightMeasurementUnit?
-        
-        /// Checking whether which input field is pressed
-        if sender.tag == 1 {
-            weightUnit = WeightMeasurementUnit.kilogram
-        } else if sender.tag == 2 {
-            weightUnit = WeightMeasurementUnit.gram
-        } else if sender.tag == 3 {
-            weightUnit = WeightMeasurementUnit.ounce
-        } else if sender.tag == 4 {
-            weightUnit = WeightMeasurementUnit.pound
-        } else if sender.tag == 5 {
-            weightUnit = WeightMeasurementUnit.stone
-        } else if sender.tag == 6 {
-            weightUnit = WeightMeasurementUnit.stone
-        }
-        if weightUnit != nil {
-            updateInputTextFields(textField: sender, weightUnit: weightUnit!)
-        }
-    }
-    
-    /**
-     This function finds the first responder in a UIView
-     - Parameter inView: The corresponding UIView.
-     - Returns: A UIView or a subview will be returned.
-     */
-    func findResponder(inView view: UIView) -> UIView? {
-        for subView in view.subviews{
-            if subView.isFirstResponder{
-                return subView
-            }
-            if let recursiveSubView = self.findResponder(inView: subView){
-                return recursiveSubView
-            }
-        }
-        return nil
-    }
-    
-    /// Checking whether the input is field is empty if so save button needs to be disabled
-    func checkAvailabilityRightBarButtons() {
-        
-        let rightBarButtons =  self.navigationItem.rightBarButtonItems!.prefix(2)
-        for button in rightBarButtons {
-            if isInputTextFieldEmpty() {
-                button.isEnabled = false
-            }else{
-                button.isEnabled = true
-            }
-        }
-    }
-    
-    /**
-     Method returns a boolean after checking whether input fields are empty or not
      
-     - Returns: Boolean
-     
-     */
-    func isInputTextFieldEmpty() -> Bool {
-        if !(kilogramInputTextField.text?.isEmpty)! && !(gramInputTextField.text?.isEmpty)! && !(ounceInputField.text?.isEmpty)! && !(poundInputField.text?.isEmpty)! &&
-            !(spStoneInputField.text?.isEmpty)! && !(spPoundInputField.text?.isEmpty)!{
-            return false
-        }
-        return true
-    }
-    
     /**
      Method will update the other weight input fields
      
      -  Parameters: textField, weightUnit of the changed method
      
      */
-    func updateInputTextFields(textField: UITextField, weightUnit: WeightMeasurementUnit) -> Void{
+    func updateInputTextFields<T: MeasurementUnit>(textField: UITextField, unit: T) -> Void{
         if let input = textField.text {
             if input.isEmpty {
                 
                 ///Clear the input text fields when its empty
                 clearTextFields(inputTextFields: weightInputTextFields)
+                checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: weightInputTextFields)
                 
             } else {
                 
                 if let value = Double(input as String) {
-                    let weight = Weight(unit: weightUnit, value: value)
+                    let weight = Weight(unit: unit as! WeightMeasurementUnit, value: value)
                     
                     for _unit in WeightMeasurementUnit.getAvailableWeightUnits {
-                        if _unit == weightUnit {
+                        if _unit == unit as! WeightMeasurementUnit {
                             continue
                         }
-                        let textField = mapUnitToTextField(weightUnit: _unit)
+                        let textField = mapUnitToTextField(unit: _unit)
                         let result = weight.convert(unit: _unit)
                         
                         /// Rounding off to 4 decimal places by default
@@ -286,34 +180,22 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
-    /// This function clears all the text fields
-    func clearTextFields(inputTextFields:[UITextField]) {
-        for textInputField in inputTextFields{
-            textInputField.text = ""
-        }
-        checkAvailabilityRightBarButtons()
-    }
-    
     /**
      This function maps value to weight unit respectively
      - Parameters: weightUnit of the weight that user input
      - Returns: Respective UITextField
      */
-    func mapUnitToTextField(weightUnit: WeightMeasurementUnit) -> UITextField {
-        var textField = kilogramInputTextField
-        switch weightUnit {
-        case .kilogram:
-            textField = kilogramInputTextField
-        case .gram:
-            textField = gramInputTextField
-        case .ounce:
-            textField = ounceInputField
-        case .pound:
-            textField = poundInputField
-        case .stone:
-            textField = spStoneInputField
+    func mapUnitToTextField<T: MeasurementUnit>(unit: T) -> UITextField{
+        var textField = UITextField()
+        let weightUnit = WeightMeasurementUnit.getAvailableWeightUnits
+        for index in 1...weightUnit.count {
+            let item = weightUnit[index-1]
+            if unit as! WeightMeasurementUnit == item {
+                textField = weightInputTextFields[index-1]
+                return textField
+            }
         }
-        return textField!
+        return textField
     }
     
     /// This function separate the decimal in stone and add it to the pounds section
@@ -334,27 +216,27 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
      This function handle the save buttons' functionality which only can be save 5 conversions
      */
     @IBAction func handleSaveButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(){
-            let lastAddData = [kilogramInputTextField.text!, gramInputTextField.text!,ounceInputField.text!,poundInputField.text!,spStoneInputField.text!,spPoundInputField.text!] as [String]
+        if !isInputTextFieldEmpty(inputFields: weightInputTextFields){
             
-            let conversion = "\(gramInputTextField.text!) g = \(kilogramInputTextField.text!) kg = \(ounceInputField.text!) oz =  \(poundInputField.text!) lb = \(spStoneInputField.text!)  stones & \(spPoundInputField.text!) pounds"
+            let lastData = lastAddedData(inputFields: weightInputTextFields) as [String]
+            
+            let conversion = Weight.weightConversion(inputFields: weightInputTextFields) as String
             
             /// Getting initial history data
             var weightHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
             if (!checkConversionIsAlreadySaved(historyList: weightHistory, conversion: conversion)){
+                
                 /// Check whether there are maximum amount of weight conversions if so first value will be removed
-                if weightHistory.count >= UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT {
-                    weightHistory = Array(weightHistory.suffix(UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT - 1))
-                }
-                weightHistory.append(conversion)
+                weightHistory = checkMaximumConversion(conversion: conversion, conversionKey: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY, conversionsMaxCount: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_MAX_COUNT) as [String]
                 
-                /// Add last added conversion
-                UserDefaults.standard.set(lastAddData, forKey: UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY)
+                /// Save last conversion in user defaults
+                saveInUserDefaults(data: lastData, key: UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY)
                 
-                /// Saving data in user defaults
-                UserDefaults.standard.set(weightHistory, forKey: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY)
+                /// Saving conversion in user defaults
+                saveInUserDefaults(data: weightHistory, key: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY)
                 
+                // Disabling the save button
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
                 
                 /// showAlert method is defined in the  UIViewControllerHelper
@@ -372,19 +254,13 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate {
         }
     }
     
-    func checkConversionIsAlreadySaved(historyList:[String],conversion:String)->Bool{
-        for historyListConversion in historyList {
-            if (historyListConversion == conversion){
-                return true
-            }
-        }
-        return false
-    }
+    
     
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(){
+        if !isInputTextFieldEmpty(inputFields: weightInputTextFields){
             ///Clear the input text fields when its empty
             clearTextFields(inputTextFields: weightInputTextFields)
+            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: weightInputTextFields)
         }
     }
     

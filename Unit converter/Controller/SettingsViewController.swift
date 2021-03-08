@@ -15,7 +15,7 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var buttonSelectorDecimal: UIButton!
     
     let decimalSelector = DropDown()
-    var decimal =  4
+    var decimal =  DecimalSelector.defaultDecimalDigit
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,7 @@ class SettingsViewController: UIViewController {
             guard let _ = self else { return }
             
             self!.decimal =  Int(item) ?? 0
-            print(self!.decimal)
+
             /// Saving data in user defaults
             UserDefaults.standard.set(item, forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY)
             sender.setTitle(item, for: .normal) //9

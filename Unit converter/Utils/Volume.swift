@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 /// VolumeMeasurementUnit enumeration is used to define the units
-enum VolumeMeasurementUnit {
+enum VolumeMeasurementUnit: MeasurementUnit{
     case cuMillimetre, cuCentimetre, cuMetre, cuInch, cuFoot, cuYard
     
     static let getAvailableVolumeUnits = [cuMillimetre, cuCentimetre, cuMetre, cuInch, cuFoot, cuYard]
@@ -103,5 +104,10 @@ struct Volume {
         }
         
         return output
+    }
+    
+    static func volumeConversion(inputFields:[UITextField]) -> String {
+        return "\(inputFields[0].text ?? "0") cu mm = \(inputFields[1].text ?? "0") cu cm = \(inputFields[2].text ?? "0") cu m = \(inputFields[3].text ?? "0") cu in = \(inputFields[4].text ?? "0") cu ft = \(inputFields[5].text ?? "0") cu yd"
+        
     }
 }
