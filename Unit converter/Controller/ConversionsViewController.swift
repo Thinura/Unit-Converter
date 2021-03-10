@@ -121,6 +121,7 @@ extension ConversionsViewController: UICollectionViewDataSource, UICollectionVie
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Initialising segue functionality
         performSegue(withIdentifier: conversionsCell[indexPath.row].getSegueIdentifier(), sender: self)
     }
     

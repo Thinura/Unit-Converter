@@ -8,8 +8,6 @@
 import UIKit
 import DropDown
 
-//let DECIMAL_DIGIT_USER_DEFAULTS_KEY = "decimal"
-
 class SettingsViewController: UIViewController {
     
     @IBOutlet weak var buttonSelectorDecimal: UIButton!

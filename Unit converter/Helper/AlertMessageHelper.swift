@@ -19,7 +19,7 @@ struct Alert {
     struct Success {
         static let title = "Successfully Saved!"
         struct Weight {
-            static let message = "The weight conversion was successfully saved in history.."
+            static let message = "The weight conversion was successfully saved in history."
         }
         struct Temperature {
             static let message = "The temperature conversion was successfully saved in history."
