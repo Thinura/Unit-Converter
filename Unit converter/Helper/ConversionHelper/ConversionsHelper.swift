@@ -16,8 +16,8 @@ protocol ConversionHelper {
     func settingUpDecimal()
     
     /**
-        This function which input field is pressed and updating the other input fields
-        - Parameter sender:UITextField
+     This function which input field is pressed and updating the other input fields
+     - Parameter sender:UITextField
      */
     func checkWhichTextFieldPressed(sender:UITextField)
     
@@ -82,7 +82,7 @@ extension ConversionHelper{
     }
     
     // Load last conversion from user defaults
-    func loadLastConversion(inputFields:[UITextField],conversionUserDefaultsKey:String){
+    func loadLastConversion(inputFields:[UITextField],conversionUserDefaultsKey:String,conversionLastActiveTextFieldKey:String,rightBarButtonItem: UIBarButtonItem){
         /// Read from user defaults
         let lastSavedConversion = UserDefaults.standard.value(forKey: conversionUserDefaultsKey) as? [String]
         
@@ -97,7 +97,22 @@ extension ConversionHelper{
                     
                 }
             }
+            
+            /// Reading from user defaults
+            let lastActiveTag = UserDefaults.standard.value(forKey: conversionLastActiveTextFieldKey) as? NSInteger ?? 0
+            
+            let lastActiveTextField = getTextFieldByTag(tag: lastActiveTag, textFieldArray: inputFields)
+            
+            if lastActiveTextField != nil {
+                checkWhichTextFieldPressed(sender: lastActiveTextField!)
+                
+                // Disabling the save button
+                rightBarButtonItem.isEnabled = false;
+            }
+            
         }
+        
+        
         
     }
     
@@ -113,7 +128,7 @@ extension ConversionHelper{
     }
     
     // Save in user defaults by key and value
-    func saveInUserDefaults(data:[String],key:String) {
+    func saveInUserDefaults(data:Any,key:String) {
         UserDefaults.standard.set(data, forKey: key)
     }
     
@@ -143,5 +158,51 @@ extension ConversionHelper{
         /// Default value will be set to 4 decimal points
         let decimal = ((userDefaultDecimalDigit ?? DecimalSelector.defaultDecimal as NSString) as NSString).integerValue
         return decimal
+    }
+    
+    /**
+     This function return the unit according to tag
+     - Parameter tag: Int,
+     - Parameter unitsArray: Array of the unit
+     */
+    func getUnitByTag<T: MeasurementUnit>(tag:Int, unitsArray:[T]) -> T? {
+        var unit:T?
+        for index in 1...unitsArray.count {
+            /// Checking whether which input field is pressed
+            if(tag == index){
+                unit = unitsArray[index-1]
+                return unit
+            }
+        }
+        return unit
+    }
+    
+    /**
+     This function return the unit according to tag
+     - Parameter tag: Int,
+     - Parameter textFieldArray: Array of the input text fields
+     */
+    func getTextFieldByTag(tag:Int, textFieldArray:[UITextField]) -> UITextField? {
+        var textField = UITextField()
+        for index in 1...textFieldArray.count {
+            /// Checking whether which input field is pressed
+            if(tag == index){
+                textField = textFieldArray[index-1]
+                return textField
+            }
+        }
+        return nil
+    }
+    
+    /** This function delete text from all the text fields
+     - Parameter inputTextFields : input text fields array
+     - Parameter rightBarButtonItems : right navigation buttons
+     */
+    func inputTextFieldsClearButton(inputTextFields:[UITextField],rightBarButtonItems: [UIBarButtonItem]){
+        if !isInputTextFieldEmpty(inputFields: inputTextFields){
+            ///Clear the input text fields when its empty
+            clearTextFields(inputTextFields: inputTextFields)
+            checkAvailabilityRightBarButtons(rightBarButtonItems:rightBarButtonItems, inputFields: inputTextFields)
+        }
     }
 }

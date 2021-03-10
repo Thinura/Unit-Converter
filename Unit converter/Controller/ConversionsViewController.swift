@@ -97,11 +97,12 @@ class ConversionsViewController: UIViewController {
     
 }
 
-/** Extension for ConversionsViewController to override the UICollectionViewDataSource and UICollectionViewDelegate
-    To initialise  the number of cells
-    To initialise the cell image
-    To initialise the button click method
-    */
+/**
+ Extension for ConversionsViewController to override the UICollectionViewDataSource and UICollectionViewDelegate
+ To initialise  the number of cells
+ To initialise the cell image
+ To initialise the button click method
+ */
 
 extension ConversionsViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
