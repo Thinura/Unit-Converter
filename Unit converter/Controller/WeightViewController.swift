@@ -25,7 +25,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
     @IBOutlet weak var poundInputField: UITextField!
     @IBOutlet weak var spStoneInputField: UITextField!
     @IBOutlet weak var spPoundInputField: UITextField!
-    var weightInputTextFields: [UITextField] { return [kilogramInputTextField, gramInputTextField, ounceInputField, poundInputField, spStoneInputField, spPoundInputField]}
+    var weightInputTextFields: [UITextField] { return [gramInputTextField, kilogramInputTextField, ounceInputField, poundInputField, spStoneInputField, spPoundInputField]}
     ///Stack views for Input Fields
     @IBOutlet weak var kilogramStackView: UIStackView!
     @IBOutlet weak var gramStackView: UIStackView!
@@ -68,25 +68,21 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         
-        let decimal = readingDecimalDigitInUserDefaults()
+        // Inililzing user default decimal digit
+        self.decimalDigit = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
             // Change according to the decimal digit but not active input field
             checkWhichTextFieldPressed(sender: activeInputTextField)
             
         }else{
-            
             // Load last saved data
-            loadLastConversion(inputFields: weightInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY)
-            
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
-            checkWhichTextFieldPressed(sender:kilogramInputTextField)
+            loadLastConversion(inputFields: weightInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Weight.LAST_WEIGHT_CONVERSION_USER_DEFAULTS_KEY,conversionLastActiveTextFieldKey: UserDefaultsKeys.Weight.LAST_EDITED_FIELD_WEIGHT_CONVERSION_TAG_USER_DEFAULTS_KEY,rightBarButtonItem: self.navigationItem.rightBarButtonItem!)
             
         }
     }
+    
+    
     
     /**
      This function which input field is pressed and updating the other input fields
@@ -97,12 +93,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
     func checkWhichTextFieldPressed(sender:UITextField){
         var weightUnit: WeightMeasurementUnit?
         
-        for index in 1...WeightMeasurementUnit.getAvailableWeightUnits.count {
-            /// Checking whether which input field is pressed
-            if(sender.tag == index){
-                weightUnit = WeightMeasurementUnit.getAvailableWeightUnits[index-1]
-            }
-        }
+        weightUnit = getUnitByTag(tag: sender.tag, unitsArray: WeightMeasurementUnit.getAvailableWeightUnits)
         
         if weightUnit != nil {
             updateInputTextFields(textField: sender, unit: weightUnit!)
@@ -138,11 +129,10 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
     
     /// listening which input was typed 
     @IBAction func handleInputTextField(_ sender: UITextField) {
-        
         checkWhichTextFieldPressed(sender: sender)
         checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: weightInputTextFields)
     }
-     
+    
     /**
      Method will update the other weight input fields
      
@@ -169,7 +159,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
                         let textField = mapUnitToTextField(unit: _unit)
                         let result = weight.convert(unit: _unit)
                         
-                        /// Rounding off to 4 decimal places by default
+                        // Rounding off to decimal digit
                         let roundedResult = result.truncate(places: self.decimalDigit)
                         
                         textField.text = String(roundedResult)
@@ -207,7 +197,7 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
                 let poundValue = decimalPart * 14
                 
                 spStoneInputField.text = String(integerPart)
-                spPoundInputField.text = String(Double(round(10000 * poundValue) / 10000))
+                spPoundInputField.text = String(poundValue.truncate(places: self.decimalDigit))
             }
         }
     }
@@ -236,6 +226,9 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
                 /// Saving conversion in user defaults
                 saveInUserDefaults(data: weightHistory, key: UserDefaultsKeys.Weight.WEIGHT_CONVERSIONS_USER_DEFAULTS_KEY)
                 
+                /// Saving last active text field in user defaults
+                saveInUserDefaults(data: activeInputTextField.tag, key: UserDefaultsKeys.Weight.LAST_EDITED_FIELD_WEIGHT_CONVERSION_TAG_USER_DEFAULTS_KEY)
+                
                 // Disabling the save button
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
                 
@@ -257,11 +250,9 @@ class WeightViewController: UIViewController, CustomKeyboardDelegate, Conversion
     
     
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(inputFields: weightInputTextFields){
-            ///Clear the input text fields when its empty
-            clearTextFields(inputTextFields: weightInputTextFields)
-            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: weightInputTextFields)
-        }
+        
+        inputTextFieldsClearButton(inputTextFields: weightInputTextFields, rightBarButtonItems: self.navigationItem.rightBarButtonItems!)
+        
     }
     
     

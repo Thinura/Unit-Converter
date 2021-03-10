@@ -66,21 +66,17 @@ class SpeedViewController: UIViewController, CustomKeyboardDelegate, ConversionH
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         
-        let decimal = readingDecimalDigitInUserDefaults()
+        // Inililzing user default decimal digit
+        self.decimalDigit = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
             // Change according to the decimal digit but not active input field
             checkWhichTextFieldPressed(sender: activeInputTextField)
             
         }else{
-            // Load last saved data
-            loadLastConversion(inputFields: speedInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY)
             
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
-            checkWhichTextFieldPressed(sender:metresSecondInputTextField)
+            // Load last saved data
+            loadLastConversion(inputFields: speedInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY,conversionLastActiveTextFieldKey: UserDefaultsKeys.Speed.LAST_EDITED_FIELD_SPEED_CONVERSION_TAG_USER_DEFAULTS_KEY,rightBarButtonItem: self.navigationItem.rightBarButtonItem!)
             
         }
     }
@@ -88,12 +84,7 @@ class SpeedViewController: UIViewController, CustomKeyboardDelegate, ConversionH
     func checkWhichTextFieldPressed(sender:UITextField){
         var speedUnit: SpeedMeasurementUnit?
         
-        for index in 1...SpeedMeasurementUnit.getAvailableSpeedUnits.count {
-            /// Checking whether which input field is pressed
-            if(sender.tag == index){
-                speedUnit = SpeedMeasurementUnit.getAvailableSpeedUnits[index-1]
-            }
-        }
+        speedUnit = getUnitByTag(tag: sender.tag, unitsArray: SpeedMeasurementUnit.getAvailableSpeedUnits)
         
         if speedUnit != nil {
             updateInputTextFields(textField: sender, unit: speedUnit!)
@@ -158,7 +149,7 @@ class SpeedViewController: UIViewController, CustomKeyboardDelegate, ConversionH
                         let textField = mapUnitToTextField(unit: _unit)
                         let result = speed.convert(unit: _unit)
                         
-                        // Rounding off to 4 decimal places by default
+                        // Rounding off to decimal digit
                         let roundedResult = result.truncate(places: self.decimalDigit)
                         
                         textField.text = String(roundedResult)
@@ -206,10 +197,13 @@ class SpeedViewController: UIViewController, CustomKeyboardDelegate, ConversionH
                 
                 /// Add last added conversion
                 saveInUserDefaults(data: lastData, key: UserDefaultsKeys.Speed.LAST_SPEED_CONVERSION_USER_DEFAULTS_KEY)
-
+                
                 
                 /// Saving data in user defaults
                 saveInUserDefaults(data: speedHistory, key: UserDefaultsKeys.Speed.SPEED_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                /// Saving last active text field in user defaults
+                saveInUserDefaults(data: activeInputTextField.tag, key: UserDefaultsKeys.Speed.LAST_EDITED_FIELD_SPEED_CONVERSION_TAG_USER_DEFAULTS_KEY)
                 
                 // Disabling the save button
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
@@ -230,11 +224,8 @@ class SpeedViewController: UIViewController, CustomKeyboardDelegate, ConversionH
     }
     
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(inputFields:speedInputTextFields){
-            ///Clear the input text fields when its empty
-            clearTextFields(inputTextFields: speedInputTextFields)
-            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: speedInputTextFields)
-        }
+        
+        inputTextFieldsClearButton(inputTextFields: speedInputTextFields, rightBarButtonItems: self.navigationItem.rightBarButtonItems!)
     }
     
     /**

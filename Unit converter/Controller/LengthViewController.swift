@@ -70,22 +70,17 @@ class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionH
     
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
-        /// Reading from user defaults
-        let decimal = readingDecimalDigitInUserDefaults()
+        /// Inililzing user default decimal digit
+        self.decimalDigit = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
             // Change according to the decimal digit but not active input field
             checkWhichTextFieldPressed(sender: activeInputTextField)
             
         }else{
-            // Load last saved data
-            loadLastConversion(inputFields: lengthInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY)
             
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
-            checkWhichTextFieldPressed(sender:millimetreInputTextField)
+            // Load last saved data
+            loadLastConversion(inputFields: lengthInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY,conversionLastActiveTextFieldKey: UserDefaultsKeys.Length.LAST_EDITED_FIELD_LENGTH_CONVERSION_TAG_USER_DEFAULTS_KEY,rightBarButtonItem: self.navigationItem.rightBarButtonItem!)
             
         }
     }
@@ -97,14 +92,7 @@ class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionH
     func checkWhichTextFieldPressed(sender:UITextField){
         var lengthUnit: LengthMeasurementUnit?
         
-        for index in 1...LengthMeasurementUnit.getAvailableLengthUnits.count {
-            /// Checking whether which input field is pressed
-            if(sender.tag == index){
-                lengthUnit = LengthMeasurementUnit.getAvailableLengthUnits[index-1]
-                
-            }
-            
-        }
+        lengthUnit = getUnitByTag(tag: sender.tag, unitsArray: LengthMeasurementUnit.getAvailableLengthUnits)
         
         if lengthUnit != nil {
             updateInputTextFields(textField: sender, unit: lengthUnit!)
@@ -168,7 +156,7 @@ class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionH
                         let textField = mapUnitToTextField(unit: _unit)
                         let result = length.convert(unit: _unit)
                         
-                        /// Rounding off to 4 decimal places by default
+                        // Rounding off to decimal digit
                         let roundedResult = result.truncate(places: self.decimalDigit)
                         
                         textField.text = String(roundedResult)
@@ -210,6 +198,7 @@ class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionH
             var lengthHistory = UserDefaults.standard.array(forKey: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY) as? [String] ?? []
             
             if (!checkConversionIsAlreadySaved(historyList: lengthHistory, conversion: conversion)){
+                
                 /// Check whether there are maximum amount of temperature conversions if so first value will be removed
                 lengthHistory = checkMaximumConversion(conversion: conversion, conversionKey: UserDefaultsKeys.Length.LAST_LENGTH_CONVERSION_USER_DEFAULTS_KEY, conversionsMaxCount: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_MAX_COUNT) as [String]
                 
@@ -218,6 +207,9 @@ class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionH
                 
                 /// Saving data in user defaults
                 saveInUserDefaults(data: lengthHistory, key: UserDefaultsKeys.Length.LENGTH_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                /// Saving last active text field in user defaults
+                saveInUserDefaults(data: activeInputTextField.tag, key: UserDefaultsKeys.Length.LAST_EDITED_FIELD_LENGTH_CONVERSION_TAG_USER_DEFAULTS_KEY)
                 
                 // Disabling the save button
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
@@ -238,12 +230,8 @@ class LengthViewController:UIViewController, CustomKeyboardDelegate, ConversionH
     }
     
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(inputFields: lengthInputTextFields){
-            ///Clear the input text fields when its empty
-            clearTextFields(inputTextFields: lengthInputTextFields)
-            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: lengthInputTextFields)
-
-        }
+        
+        inputTextFieldsClearButton(inputTextFields: lengthInputTextFields, rightBarButtonItems: self.navigationItem.rightBarButtonItems!)
     }
     
     /**

@@ -86,7 +86,7 @@ struct Weight {
     }
     
     static func weightConversion(inputFields:[UITextField]) -> String {
-        return "\(inputFields[1].text ?? "0") g = \(inputFields[0].text ?? "0") kg = \(inputFields[2].text ?? "0") oz = \(inputFields[3].text ?? "0") lb = \(inputFields[4].text ?? "0") stones & \(inputFields[5].text ?? "0") pounds"
+        return "\(inputFields[0].text ?? "0") g = \(inputFields[1].text ?? "0") kg = \(inputFields[2].text ?? "0") oz = \(inputFields[3].text ?? "0") lb = \(inputFields[4].text ?? "0") stones & \(inputFields[5].text ?? "0") pounds"
     }
     
 }

@@ -68,21 +68,16 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate, Conversion
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         
-        let decimal = readingDecimalDigitInUserDefaults()
+        // Inililzing user default decimal digit
+        self.decimalDigit = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
             // Change according to the decimal digit but not active input field
             checkWhichTextFieldPressed(sender: activeInputTextField)
             
         }else{
             // Load last saved data
-            loadLastConversion(inputFields: volumeInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
-            
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
-            checkWhichTextFieldPressed(sender: cuMillimetreInputTextField)
+            loadLastConversion(inputFields: volumeInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY,conversionLastActiveTextFieldKey: UserDefaultsKeys.Volume.LAST_EDITED_FIELD_VOLUME_CONVERSION_TAG_USER_DEFAULTS_KEY,rightBarButtonItem: self.navigationItem.rightBarButtonItem!)
             
         }
     }
@@ -94,12 +89,7 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate, Conversion
     func checkWhichTextFieldPressed(sender:UITextField){
         var volumeUnit: VolumeMeasurementUnit?
         
-        for index in 1...VolumeMeasurementUnit.getAvailableVolumeUnits.count {
-            /// Checking whether which input field is pressed
-            if(sender.tag == index){
-                volumeUnit = VolumeMeasurementUnit.getAvailableVolumeUnits[index-1]
-            }
-        }
+        volumeUnit = getUnitByTag(tag: sender.tag, unitsArray: VolumeMeasurementUnit.getAvailableVolumeUnits)
         
         if volumeUnit != nil {
             updateInputTextFields(textField: sender, unit: volumeUnit!)
@@ -163,7 +153,7 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate, Conversion
                         let textField = mapUnitToTextField(unit: _unit)
                         let result = volume.convert(unit: _unit)
                         
-                        /// Rounding off to 4 decimal places by default
+                        // Rounding off to decimal digit
                         let roundedResult = result.truncate(places: self.decimalDigit)
                         
                         textField.text = String(roundedResult)
@@ -208,13 +198,16 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate, Conversion
             if (!checkConversionIsAlreadySaved(historyList: volumeHistory, conversion: conversion)){
                 
                 /// Check whether there are maximum amount of volume conversions if so first value will be removed
-                volumeHistory = checkMaximumConversion(conversion: conversion, conversionKey: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY, conversionsMaxCount: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT ) as [String]
+                volumeHistory = checkMaximumConversion(conversion:  conversion, conversionKey: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY, conversionsMaxCount: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_MAX_COUNT ) as [String]
                 
                 /// Add last added conversion
-                saveInUserDefaults(data: lastData, key: UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
+                saveInUserDefaults(data: lastData, key:  UserDefaultsKeys.Volume.LAST_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
                 
                 /// Saving data in user defaults
-                saveInUserDefaults(data: volumeHistory, key: UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                saveInUserDefaults(data: volumeHistory, key:  UserDefaultsKeys.Volume.VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
+                
+                /// Saving last active text field in user defaults
+                saveInUserDefaults(data: activeInputTextField.tag, key: UserDefaultsKeys.Volume.LAST_EDITED_FIELD_VOLUME_CONVERSION_TAG_USER_DEFAULTS_KEY)
                 
                 // Disabling the save button
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
@@ -235,12 +228,8 @@ class VolumeViewController: UIViewController, CustomKeyboardDelegate, Conversion
     }
     
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(inputFields: volumeInputTextFields){
-            
-            ///Clear the input text fields when its empty
-            clearTextFields(inputTextFields: volumeInputTextFields)
-            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: volumeInputTextFields)
-        }
+        
+        inputTextFieldsClearButton(inputTextFields: volumeInputTextFields, rightBarButtonItems: self.navigationItem.rightBarButtonItems!)
     }
     
     /**

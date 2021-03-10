@@ -361,7 +361,7 @@
                                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Kg" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="YSx-8f-JIh" userLabel="Kilogram Text Field">
+                                                            <textField opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Kg" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="YSx-8f-JIh" userLabel="Kilogram Text Field">
                                                                 <rect key="frame" x="0.0" y="44" width="374" height="36"/>
                                                                 <color key="backgroundColor" name="SystemInputField"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -384,7 +384,7 @@
                                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <textField opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="g" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="DlS-0o-9fR" userLabel="Gram Text Field">
+                                                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="g" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="DlS-0o-9fR" userLabel="Gram Text Field">
                                                                 <rect key="frame" x="0.0" y="44" width="374" height="36"/>
                                                                 <color key="backgroundColor" name="SystemInputField"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -444,20 +444,20 @@
                                                             <constraint firstAttribute="height" constant="80" id="Yim-GX-zKe"/>
                                                         </constraints>
                                                     </stackView>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="yVi-HZ-5sD" userLabel="Stone pounds Stack View">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="yVi-HZ-5sD" userLabel="Stone pounds Stack View">
                                                         <rect key="frame" x="0.0" y="352" width="374" height="80"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="h8J-E5-bGd" userLabel="Stone Stack View">
-                                                                <rect key="frame" x="0.0" y="0.0" width="200" height="80"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="177" height="80"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stone" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="160" translatesAutoresizingMaskIntoConstraints="NO" id="LRf-w1-RrE">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="200" height="36"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="177" height="36"/>
                                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                                         <color key="textColor" systemColor="secondaryLabelColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <textField opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="st" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Ee2-M6-cfh" userLabel="Stone Text Field">
-                                                                        <rect key="frame" x="0.0" y="44" width="200" height="36"/>
+                                                                        <rect key="frame" x="0.0" y="44" width="177" height="36"/>
                                                                         <color key="backgroundColor" name="SystemInputField"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <textInputTraits key="textInputTraits"/>
@@ -468,20 +468,19 @@
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="80" id="QmN-xK-0TN"/>
-                                                                    <constraint firstAttribute="width" constant="200" id="tND-mn-Vu8"/>
                                                                 </constraints>
                                                             </stackView>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ev1-gi-WtN" userLabel="Pounds Stack View">
-                                                                <rect key="frame" x="220" y="0.0" width="154" height="80"/>
+                                                                <rect key="frame" x="197" y="0.0" width="177" height="80"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pounds" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UHv-mW-ldA">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="154" height="36"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="177" height="36"/>
                                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                                         <color key="textColor" systemColor="secondaryLabelColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <textField opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="st" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="YTc-2o-7qc" userLabel="Pounds Text Field">
-                                                                        <rect key="frame" x="0.0" y="44" width="154" height="36"/>
+                                                                        <rect key="frame" x="0.0" y="44" width="177" height="36"/>
                                                                         <color key="backgroundColor" name="SystemInputField"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <textInputTraits key="textInputTraits"/>

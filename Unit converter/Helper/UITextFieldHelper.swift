@@ -16,22 +16,10 @@ extension UITextField: CustomKeyboardDelegate{
      - Parameter customKeyboardDelegate: the delegate of the custom keyboard
      */
     func initializeCustomKeyboard(delegate: CustomKeyboardDelegate?) {
-        let customKeyboard = CustomKeyboard(frame: CGRect(x: 0, y: 0, width: 0, height: customKeyboardDefaultHeight))
+        let customKeyboard = CustomKeyboard(frame: CGRect(x: 0, y: 0, width: 0, height: CustomKeyboardDefaults.defaultHeight))
         self.inputView = customKeyboard
         customKeyboardDelegate = delegate
         customKeyboard.delegate = self
-    }
-    
-    
-    /**
-     This function remove the connection between text input field and custom keyboard
-     */
-    func removeCustomKeyboard() {
-        if let customKeyboard = self.inputView as? CustomKeyboard {
-            customKeyboard.delegate = nil
-        }
-        self.inputView = nil
-        customKeyboardDelegate = nil
     }
     
     /**

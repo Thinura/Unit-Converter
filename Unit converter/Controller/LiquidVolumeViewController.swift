@@ -11,10 +11,7 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
     
     /// Defaults
     var activeInputTextField = UITextField()
-    var liquidVolumeMainStackTopConstraintDefaultHeight: CGFloat = 17.0
-    var inputTextFieldKeyBoardGap = 20
-    var keyBoardDefaultHeight:CGFloat = 0
-    var decimalDigit = 4
+    var decimalDigit = DecimalSelector.defaultDecimalDigit
     
     /// Used for keyboard handling - When user pressed auto scroll will be enable
     @IBOutlet weak var liquidVolumeMainStackTopConstraint: NSLayoutConstraint!
@@ -72,21 +69,18 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
     /// This function read the decimal digit from user defaults
     func settingUpDecimal() {
         
-        let decimal = readingDecimalDigitInUserDefaults()
+        // Inililzing user default decimal digit
+        self.decimalDigit = readingDecimalDigitInUserDefaults()
         
         if !activeInputTextField.text!.isEmpty {
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
+            
             // Change according to the decimal digit but not active input field
             checkWhichTextFieldPressed(sender: activeInputTextField)
             
         }else{
-            // Load last saved data
-            loadLastConversion(inputFields: liquidVolumeInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY)
             
-            // Inililzing user default decimal digit
-            self.decimalDigit = decimal
-            checkWhichTextFieldPressed(sender:litreInputTextField)
+            // Load last saved data
+            loadLastConversion(inputFields: liquidVolumeInputTextFields, conversionUserDefaultsKey:  UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY,conversionLastActiveTextFieldKey: UserDefaultsKeys.LiquidVolume.LAST_EDITED_FIELD_LIQUID_VOLUME_CONVERSION_TAG_USER_DEFAULTS_KEY,rightBarButtonItem: self.navigationItem.rightBarButtonItem!)
             
         }
     }
@@ -94,48 +88,20 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
     func checkWhichTextFieldPressed(sender:UITextField){
         var liquidVolumeUnit: LiquidVolumeMeasurementUnit?
         
-        for index in 1...LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits.count {
-            /// Checking whether which input field is pressed
-            if(sender.tag == index){
-                liquidVolumeUnit = LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits[index-1]
-            }
-        }
+        liquidVolumeUnit = getUnitByTag(tag: sender.tag, unitsArray: LiquidVolumeMeasurementUnit.getAvailableLiquidVolumeUnits)
         
         if liquidVolumeUnit != nil {
             updateInputTextFields(textField: sender, unit: liquidVolumeUnit!)
         }
     }
     
-//    // Load last conversion from user defaults
-//    func loadLastConversion(){
-//        /// Read from user defaults
-//        let lastSavedConversion = UserDefaults.standard.value(forKey: UserDefaultsKeys.LiquidVolume.LAST_LIQUID_VOLUME_CONVERSION_USER_DEFAULTS_KEY) as? [String]
-//
-//        if lastSavedConversion?.count ?? 0 > 0 {
-//
-//            // Setting the conversion to the input text fields
-//            litreInputTextField.text = lastSavedConversion![0]
-//            millilitreInputTextField.text = lastSavedConversion![1]
-//            ukGallonInputTextField.text = lastSavedConversion![2]
-//            ukPintInputTextField.text = lastSavedConversion![3]
-//            ukFluidOunceInputTextField.text = lastSavedConversion![4]
-//        }
-//
-//    }
-    
     /**
      This function will be called by the tap gesture recogniser and will hide the keyboard and restore the top constraint back to pervious view
      
      */
     @objc func keyWillHide(){
-        // Remove listening the first responder
-        view.endEditing(true)
+        hideCustomKeyboard(mainStackTopConstraint: self.liquidVolumeMainStackTopConstraint,view: self.view)
         
-        UIView.animate(withDuration: 0.50, animations: {
-            // Putting the view back to previous state
-            self.liquidVolumeMainStackTopConstraint.constant = self.liquidVolumeMainStackTopConstraintDefaultHeight
-            self.view.layoutIfNeeded()
-        })
     }
     
     
@@ -152,32 +118,7 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
         if responder != nil{
             activeInputTextField = responder as! UITextField
             
-            let activeInputTextFieldSuperView = activeInputTextField.superview!
-            
-            
-            if let info = notification.userInfo{
-                let keyboard:CGRect = info["UIKeyboardFrameEndUserInfoKey"] as! CGRect
-                
-                let targetY = view.frame.size.height - keyboard.height - 15 - activeInputTextField.frame.size.height
-                
-                let initialY = liquidVolumeMainStack.frame.origin.y + activeInputTextFieldSuperView.frame.origin.y + activeInputTextField.frame.origin.y
-                
-                
-                if initialY > targetY {
-                    let diff = targetY - initialY
-                    let targetOffsetForTopConstraint = liquidVolumeMainStackTopConstraint.constant + diff
-                    self.view.layoutIfNeeded()
-                    
-                    UIView.animate(withDuration: 0.25, animations: {
-                        self.liquidVolumeMainStackTopConstraint.constant = targetOffsetForTopConstraint
-                        self.view.layoutIfNeeded()
-                    })
-                }
-                
-                var contentInset:UIEdgeInsets = self.liquidVolumeScreenScrollView.contentInset
-                contentInset.bottom = keyboard.size.height
-                liquidVolumeScreenScrollView.contentInset = contentInset
-            }
+            showCustomKeyboard(activeInputTextField: activeInputTextField, notification: notification, screenMainStackView: self.liquidVolumeMainStack, screenScrollView: self.liquidVolumeScreenScrollView, mainStackTopConstraint: self.liquidVolumeMainStackTopConstraint, view: self.view)
         }
     }
     
@@ -214,7 +155,7 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
                         let textField = mapUnitToTextField(unit: _unit)
                         let result = liquidVolume.convert(unit: _unit)
                         
-                        /// Rounding off to 4 decimal places by default
+                        // Rounding off to decimal digit
                         let roundedResult = result.truncate(places: self.decimalDigit)
                         
                         textField.text = String(roundedResult)
@@ -266,6 +207,9 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
                 /// Saving data in user defaults
                 saveInUserDefaults(data: liquidVolumeHistory, key: UserDefaultsKeys.LiquidVolume.LIQUID_VOLUME_CONVERSIONS_USER_DEFAULTS_KEY)
                 
+                /// Saving last active text field in user defaults
+                saveInUserDefaults(data: activeInputTextField.tag, key: UserDefaultsKeys.LiquidVolume.LAST_EDITED_FIELD_LIQUID_VOLUME_CONVERSION_TAG_USER_DEFAULTS_KEY)
+                
                 // Disabling the save button
                 self.navigationItem.rightBarButtonItem!.isEnabled = false;
                 
@@ -284,11 +228,8 @@ class LiquidVolumeViewController: UIViewController, CustomKeyboardDelegate, Conv
     }
     
     @IBAction func inputTextFieldsResetButton(_ sender: UIBarButtonItem) {
-        if !isInputTextFieldEmpty(inputFields: liquidVolumeInputTextFields){
-            ///Clear the input text fields when its empty
-            clearTextFields(inputTextFields: liquidVolumeInputTextFields)
-            checkAvailabilityRightBarButtons(rightBarButtonItems:self.navigationItem.rightBarButtonItems!,inputFields: liquidVolumeInputTextFields)
-        }
+        
+        inputTextFieldsClearButton(inputTextFields: liquidVolumeInputTextFields, rightBarButtonItems: self.navigationItem.rightBarButtonItems!)
     }
     
     /**
