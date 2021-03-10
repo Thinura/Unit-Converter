@@ -33,4 +33,12 @@ extension UIColor{
         }
     }
     
+    static var dropDownBackground: UIColor {
+        return UIColor(named: "SystemBackground") ?? .systemBackground
+    }
+    
+    static var dropDownText: UIColor {
+        return UIColor(named: "Custom") ?? .label
+    }
+    
 }

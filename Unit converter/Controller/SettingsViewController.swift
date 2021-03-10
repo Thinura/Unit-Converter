@@ -39,6 +39,8 @@ class SettingsViewController: UIViewController {
         decimalSelector.anchorView = sender
         decimalSelector.bottomOffset = CGPoint(x: 0, y: sender.frame.size.height)
         decimalSelector.show()
+        decimalSelector.backgroundColor = UIColor.dropDownBackground
+        decimalSelector.textColor = UIColor.dropDownText
         decimalSelector.selectionAction = { [weak self] (index: Int, item: String) in //8
             guard let _ = self else { return }
             
