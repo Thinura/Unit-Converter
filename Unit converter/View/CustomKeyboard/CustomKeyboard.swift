@@ -7,9 +7,6 @@
 
 import UIKit
 
-// Default size of the keyboard 250
-let customKeyboardDefaultHeight = 250
-
 // Declares the methods needs to implement if the keyboard is used by a controller
 @objc protocol CustomKeyboardDelegate {
     func customKeyboardNumericKeysHandle(key: Int)

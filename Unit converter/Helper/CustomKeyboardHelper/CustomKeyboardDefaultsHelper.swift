@@ -9,4 +9,6 @@ import UIKit
 
 struct CustomKeyboardDefaults {
     static let topConstraintDefaultHeight: CGFloat = 17.0
+    // Default size of the keyboard 250
+    static let defaultHeight = 250
 }
