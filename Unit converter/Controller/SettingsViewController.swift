@@ -23,6 +23,10 @@ class SettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        settingUpDecimalDigit()
+    }
+    
+    func settingUpDecimalDigit() -> Void {
         /// Reading from user defaults
         let decimalDigit = UserDefaults.standard.value(forKey: UserDefaultsKeys.Settings.DECIMAL_DIGIT_USER_DEFAULTS_KEY) as? String
         if (decimalDigit != nil){
