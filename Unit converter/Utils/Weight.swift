@@ -12,7 +12,7 @@ import UIKit
 enum WeightMeasurementUnit: MeasurementUnit {
     case kilogram, gram, ounce, pound, stone
     
-    static let getAvailableWeightUnits = [kilogram, gram, ounce, pound, stone]
+    static let getAvailableWeightUnits = [gram, kilogram, ounce, pound, stone]
 }
 
 struct Weight {
@@ -28,7 +28,6 @@ struct Weight {
     /// This function will convert to all weight measurement units according to the given unit
     func convert(unit to: WeightMeasurementUnit) -> Double {
         var output = 0.0
-        
         switch unit {
         case .kilogram:
             if to == .gram {
